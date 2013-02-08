@@ -1,4 +1,5 @@
 ﻿using Flood.Editor.Controls;
+using Flood.Editor.Server;
 using Flood.RPC.Protocol;
 using Flood.RPC.Transport;
 using System;
@@ -56,6 +57,7 @@ namespace Flood.Editor
             ToolManager = new ToolManager();
             DocumentManager = new DocumentManager();
 
+            /*
             ProjectManager = new ProjectManager();
             projectPane = new ProjectPane(ProjectManager, Window.Canvas);
 
@@ -66,6 +68,7 @@ namespace Flood.Editor
             client.CreateProject("Sample");
 
             ProjectManager.CreateProject(ProjectType.Game, "Sample");
+            */
         }
 
         private void InitializeServer()
