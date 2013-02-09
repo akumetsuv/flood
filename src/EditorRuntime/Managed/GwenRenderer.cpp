@@ -7,7 +7,13 @@
 
 #using "GUI.dll"
 #using "Editor.Client.dll"
-#using "EngineBindings.dll"
+
+#ifdef BUILD_DEBUG
+	#using "EngineBindings_d.dll"
+#else	
+	#using "EngineBindings.dll"
+#endif
+
 #using <System.Drawing.dll>
 
 using namespace Gwen; 
