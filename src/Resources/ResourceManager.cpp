@@ -544,11 +544,11 @@ ResourceLoader* ResourceManager::findLoaderByClass(const Class* klass)
 
 void ResourceManager::setupResourceLoaders(Class* klass)
 {
-	for( size_t i = 0; i < klass->childs.size(); i++ )
+	for( size_t i = 0; i < klass->childs.Size(); i++ )
 	{
 		Class* child = klass->childs[i];
 
-		if( !child->childs.empty() )
+		if( !child->childs.Empty() )
 			setupResourceLoaders(child);
 	
 		if( ClassIsAbstract(child ) ) continue;

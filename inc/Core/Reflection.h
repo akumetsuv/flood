@@ -61,7 +61,7 @@ struct API_CORE Type
 	uint16 size;
 
 	// Attributes of the type.
-	//std::vector<TypeAttribute> attributes;
+	//Vector<TypeAttribute> attributes;
 
 	// Custom walk function.
 	ReflectionWalkFunction serialize;
@@ -139,13 +139,13 @@ struct API_CORE Class : public Type
 	ClassCreateFunction create_fn;
 
 	// Keeps track of the type fields.
-	std::vector<Field*> fields;
+	Vector<Field*> fields;
 
 	// Keeps track of the type fields by id.
 	ClassFieldIdMap fieldIds;
 
 	// Keeps track of the childs of the class.
-	std::vector<Class*> childs;
+	Vector<Class*> childs;
 };
 
 // Returns the parent of the class.
@@ -212,7 +212,7 @@ struct API_CORE Field
 	Type* type;
 	FieldId id;
 	const char* name;
-	std::vector<const char*> aliases;
+	Vector<const char*> aliases;
 	uint16 size;
 	uint16 offset;
 	uint16 pointer_size;
@@ -341,7 +341,7 @@ void FieldSet( const Field* field, void* object, const T& value )
 
 // Recursively finds and creates instances of child classes.
 template<typename T>
-void ClassCreateChilds(const Class* klass, Allocator* alloc, std::vector<T*>& instances)
+void ClassCreateChilds(const Class* klass, Allocator* alloc, Vector<T*>& instances)
 {
 	for( size_t i = 0; i < klass->childs.size(); i++ )
 	{
