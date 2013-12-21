@@ -7,10 +7,8 @@
 
 #include "Image.h"
 #include "Color.h"
-#include "Memory.h"
 #include "Platform.h"
 #include "Resource.h"
-#include "Stream.h"
 #include "Vector.h"
 
 using namespace System;
@@ -40,18 +38,6 @@ Flood::Image::Image(unsigned int width, unsigned int height, Flood::PixelFormat 
     auto arg1 = (::uint32)(::uint32_t)height;
     auto arg2 = (::PixelFormat)format;
     NativePtr = new ::Image(arg0, arg1, arg2);
-}
-
-void Flood::Image::SetBuffer(System::Collections::Generic::List<unsigned char>^ v)
-{
-    auto _tmpv = std::vector<::byte>();
-    for each(unsigned char _element in v)
-    {
-        auto _marshalElement = (::byte)(::uint8)(::uint8_t)_element;
-        _tmpv.push_back(_marshalElement);
-    }
-    auto arg0 = _tmpv;
-    ((::Image*)NativePtr)->setBuffer(arg0);
 }
 
 bool Flood::Image::IsCompressed()
@@ -115,16 +101,6 @@ int Flood::Image::GetHashCode()
     return (int)NativePtr;
 }
 
-Flood::ResourceHandle<Flood::Image^> Flood::Image::Create(Flood::Allocator^ _0, unsigned int width, unsigned int height, Flood::PixelFormat _1)
-{
-    auto arg0 = (::Allocator*)_0->NativePtr;
-    auto arg1 = (::uint32)(::uint32_t)width;
-    auto arg2 = (::uint32)(::uint32_t)height;
-    auto arg3 = (::PixelFormat)_1;
-    auto __ret = ::ImageCreate(arg0, arg1, arg2, arg3);
-    return Flood::ResourceHandle<Flood::Image^>(__ret.id);
-}
-
 unsigned int Flood::Image::Width::get()
 {
     auto __ret = ((::Image*)NativePtr)->getWidth();
@@ -162,30 +138,6 @@ void Flood::Image::PixelFormat::set(Flood::PixelFormat value)
     auto v = value;
     auto arg0 = (::PixelFormat)v;
     ((::Image*)NativePtr)->setPixelFormat(arg0);
-}
-
-System::Collections::Generic::List<unsigned char>^ Flood::Image::Buffer::get()
-{
-    auto &__ret = ((::Image*)NativePtr)->getBuffer();
-    auto _tmp__ret = gcnew System::Collections::Generic::List<unsigned char>();
-    for(auto _element : __ret)
-    {
-        auto _marshalElement = _element;
-        _tmp__ret->Add(_marshalElement);
-    }
-    return _tmp__ret;
-}
-
-System::Collections::Generic::List<unsigned char>^ Flood::Image::Buffer1::get()
-{
-    auto &__ret = ((::Image*)NativePtr)->getBuffer();
-    auto _tmp__ret = gcnew System::Collections::Generic::List<unsigned char>();
-    for(auto _element : __ret)
-    {
-        auto _marshalElement = _element;
-        _tmp__ret->Add(_marshalElement);
-    }
-    return _tmp__ret;
 }
 
 unsigned int Flood::Image::PixelSize::get()
@@ -233,13 +185,6 @@ Flood::ImageWriter::ImageWriter(System::IntPtr native)
 {
     auto __native = (::ImageWriter*)native.ToPointer();
     NativePtr = __native;
-}
-
-void Flood::ImageWriter::Save(Flood::Image^ image, Flood::Stream^ stream)
-{
-    auto arg0 = (::Image*)image->NativePtr;
-    auto arg1 = (::Stream*)stream->NativePtr;
-    ((::ImageWriter*)NativePtr)->save(arg0, arg1);
 }
 
 void Flood::ImageWriter::Save(Flood::Image^ image, System::String^ filePath)

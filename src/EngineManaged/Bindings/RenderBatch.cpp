@@ -6,13 +6,12 @@
 ************************************************************************/
 
 #include "RenderBatch.h"
-#include "GeometryBuffer.h"
 #include "IndexBuffer.h"
 #include "Material.h"
-#include "Memory.h"
 #include "RenderQueue.h"
 #include "RenderView.h"
 #include "UniformBuffer.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -94,19 +93,6 @@ void Flood::RenderBatch::RenderPriority::set(int value)
     auto v = value;
     auto arg0 = (::int32)(::int32_t)v;
     ((::RenderBatch*)NativePtr)->setRenderPriority(arg0);
-}
-
-Flood::GeometryBuffer^ Flood::RenderBatch::GeometryBuffer::get()
-{
-    auto &__ret = ((::RenderBatch*)NativePtr)->getGeometryBuffer();
-    return gcnew Flood::GeometryBuffer((::GeometryBuffer*)__ret.get());
-}
-
-void Flood::RenderBatch::GeometryBuffer::set(Flood::GeometryBuffer^ value)
-{
-    auto v = value;
-    auto arg0 = (::GeometryBuffer*)v->NativePtr;
-    ((::RenderBatch*)NativePtr)->setGeometryBuffer(arg0);
 }
 
 Flood::UniformBuffer^ Flood::RenderBatch::UniformBuffer::get()
@@ -214,16 +200,6 @@ void Flood::RenderBatch::Mode::set(Flood::PrimitiveRasterMode value)
     ((::RenderBatch*)NativePtr)->mode = (::PrimitiveRasterMode)value;
 }
 
-Flood::GeometryBuffer^ Flood::RenderBatch::Gb::get()
-{
-    return gcnew Flood::GeometryBuffer((::GeometryBuffer*)((::RenderBatch*)NativePtr)->gb.get());
-}
-
-void Flood::RenderBatch::Gb::set(Flood::GeometryBuffer^ value)
-{
-    ((::RenderBatch*)NativePtr)->gb = (::GeometryBuffer*)value->NativePtr;
-}
-
 Flood::UniformBuffer^ Flood::RenderBatch::Ub::get()
 {
     return gcnew Flood::UniformBuffer((::UniformBuffer*)((::RenderBatch*)NativePtr)->ub.get());
@@ -242,13 +218,5 @@ Flood::ResourceHandle<Flood::Material^> Flood::RenderBatch::Material1::get()
 void Flood::RenderBatch::Material1::set(Flood::ResourceHandle<Flood::Material^> value)
 {
     ((::RenderBatch*)NativePtr)->material = (HandleId)value.Id;
-}
-
-Flood::RenderBatch^ Flood::FloodRenderBatch::RenderBatchCreate(Flood::Allocator^ _0)
-{
-    auto arg0 = (::Allocator*)_0->NativePtr;
-    auto __ret = ::RenderBatchCreate(arg0);
-    if (__ret == nullptr) return nullptr;
-    return gcnew Flood::RenderBatch((::RenderBatch*)__ret);
 }
 

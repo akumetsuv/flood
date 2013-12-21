@@ -6,6 +6,7 @@
 ************************************************************************/
 
 #include "TextureAtlas.h"
+#include "HashMap.h"
 #include "Image.h"
 #include "Platform.h"
 #include "Rectangle.h"

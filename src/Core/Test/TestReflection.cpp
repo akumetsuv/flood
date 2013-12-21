@@ -62,7 +62,7 @@ SUITE(Core)
 		CHECK_EQUAL("E", enumE->name);
 		CHECK_EQUAL(sizeof(E), enumE->size);
 		CHECK_EQUAL((uint8)TypeKind::Enumeration, (uint8)enumE->kind);
-		CHECK_EQUAL(E::Max, enumE->values.size());
+		CHECK_EQUAL(E::Max, enumE->values.Size());
 
 		CHECK_EQUAL("F1", EnumGetValueName(enumE, E::F1));
 		CHECK_EQUAL(E::F1, EnumGetValue(enumE, "F1"));
@@ -110,7 +110,7 @@ SUITE(Core)
 	{
 		ReflectionDatabase& typedb = ReflectionGetDatabase();
 
-		for( auto it = typedb.types.begin(); it != typedb.types.end(); it++ )
+		for( auto it = typedb.types.Begin(); it != typedb.types.End(); it++ )
 		{
 			Type* type = it->second;
 			if( !ReflectionIsComposite(type) ) continue;

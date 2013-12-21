@@ -14,15 +14,17 @@
 
 namespace Flood
 {
-    enum struct FrustumProjection;
-    value struct BoundingBox;
     value struct Frustum;
-    value struct Matrix4x3;
+    enum struct FrustumProjection;
+    value struct Matrix4x4;
+    value struct Vector3;
     value struct Plane;
+    value struct Matrix4x3;
+    value struct BoundingBox;
+}
 
-    /// <summary>
-    /// Projection types.
-    /// </summary>
+namespace Flood
+{
     public enum struct FrustumProjection
     {
         Orthographic = 0,

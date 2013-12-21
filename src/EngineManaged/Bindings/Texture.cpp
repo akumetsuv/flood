@@ -6,6 +6,7 @@
 ************************************************************************/
 
 #include "Texture.h"
+#include "HashMap.h"
 #include "Image.h"
 #include "Vector.h"
 
@@ -109,16 +110,6 @@ unsigned int Flood::Texture::ExpectedSize::get()
 {
     auto __ret = ((::Texture*)NativePtr)->getExpectedSize();
     return __ret;
-}
-
-unsigned int Flood::Texture::Id1::get()
-{
-    return ((::Texture*)NativePtr)->id;
-}
-
-void Flood::Texture::Id1::set(unsigned int value)
-{
-    ((::Texture*)NativePtr)->id = (::uint32)(::uint32_t)value;
 }
 
 Flood::TextureTarget Flood::Texture::Target::get()
@@ -278,5 +269,35 @@ bool Flood::TextureUnit::OverrideModes::get()
 void Flood::TextureUnit::OverrideModes::set(bool value)
 {
     ((::TextureUnit*)NativePtr)->overrideModes = value;
+}
+
+Flood::TextureFilterMode Flood::TextureUnit::Filter::get()
+{
+    return (Flood::TextureFilterMode)((::TextureUnit*)NativePtr)->filter;
+}
+
+void Flood::TextureUnit::Filter::set(Flood::TextureFilterMode value)
+{
+    ((::TextureUnit*)NativePtr)->filter = (::TextureFilterMode)value;
+}
+
+Flood::TextureMipMode Flood::TextureUnit::Mip::get()
+{
+    return (Flood::TextureMipMode)((::TextureUnit*)NativePtr)->mip;
+}
+
+void Flood::TextureUnit::Mip::set(Flood::TextureMipMode value)
+{
+    ((::TextureUnit*)NativePtr)->mip = (::TextureMipMode)value;
+}
+
+Flood::TextureWrapMode Flood::TextureUnit::Wrap::get()
+{
+    return (Flood::TextureWrapMode)((::TextureUnit*)NativePtr)->wrap;
+}
+
+void Flood::TextureUnit::Wrap::set(Flood::TextureWrapMode value)
+{
+    ((::TextureUnit*)NativePtr)->wrap = (::TextureWrapMode)value;
 }
 

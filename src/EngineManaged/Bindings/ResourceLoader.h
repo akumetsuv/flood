@@ -13,15 +13,18 @@
 
 namespace Flood
 {
-    enum struct ResourceGroup;
-    ref class Resource;
-    ref class ResourceLoader;
-    ref class ResourceStream;
-    ref class Stream;
-    value struct ExtensionMetadata;
     value struct ResourceLoadOption;
     value struct ResourceLoadOptions;
+    ref class Resource;
+    enum struct ResourceGroup;
+    ref class ResourceStream;
+    ref class ResourceLoader;
+    ref class Extension;
+    value struct ExtensionMetadata;
+}
 
+namespace Flood
+{
     public value struct ResourceLoadOption
     {
     public:
@@ -38,8 +41,6 @@ namespace Flood
 
         ResourceLoadOptions(::ResourceLoadOptions* native);
         ResourceLoadOptions(System::IntPtr native);
-        System::String^ Name;
-        Flood::Stream^ Stream;
         Flood::Resource^ Resource;
         Flood::ResourceGroup Group;
         bool IsHighPriority;
@@ -66,11 +67,6 @@ namespace Flood
         ResourceStream(System::IntPtr native);
         ResourceStream();
 
-        property Flood::Stream^ Stream
-        {
-            Flood::Stream^ get();
-            void set(Flood::Stream^);
-        }
         property Flood::ResourceLoader^ Loader
         {
             Flood::ResourceLoader^ get();
@@ -104,22 +100,9 @@ namespace Flood
         {
             Flood::ExtensionMetadata get();
         }
-        property System::String^ Name
-        {
-            System::String^ get();
-        }
         property Flood::ResourceGroup ResourceGroup
         {
             Flood::ResourceGroup get();
-        }
-        property System::Collections::Generic::List<System::String^>^ Extensions
-        {
-            System::Collections::Generic::List<System::String^>^ get();
-        }
-        property System::Collections::Generic::List<System::String^>^ Extensions1
-        {
-            System::Collections::Generic::List<System::String^>^ get();
-            void set(System::Collections::Generic::List<System::String^>^);
         }
         virtual Flood::Resource^ Prepare(Flood::ResourceLoadOptions _1);
 

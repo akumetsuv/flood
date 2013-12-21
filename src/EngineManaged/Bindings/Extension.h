@@ -12,9 +12,12 @@
 
 namespace Flood
 {
-    ref class Extension;
     value struct ExtensionMetadata;
+    ref class Extension;
+}
 
+namespace Flood
+{
     public value struct ExtensionMetadata
     {
     public:

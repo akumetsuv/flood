@@ -9,6 +9,7 @@
 #include "RenderBatch.h"
 #include "RenderQueue.h"
 #include "Transform.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -36,39 +37,6 @@ void Flood::Geometry::AddRenderable(Flood::RenderBatch^ renderable)
     ((::Geometry*)NativePtr)->addRenderable(arg0);
 }
 
-void Flood::Geometry::AppendRenderables(System::Collections::Generic::List<Flood::RenderState>^ queue, Flood::Transform^ transform)
-{
-    auto _tmpqueue = std::vector<::RenderState>();
-    for each(Flood::RenderState _element in queue)
-    {
-        auto _marshal0 = ::RenderState();
-        if (_element.Renderable != nullptr)
-            _marshal0.renderable = (::RenderBatch*)_element.Renderable->NativePtr;
-        if (_element.Material != nullptr)
-            _marshal0.material = (::Material*)_element.Material->NativePtr;
-        auto _marshal1 = ::Matrix4x3();
-        _marshal1.m11 = _element.ModelMatrix.M11;
-        _marshal1.m12 = _element.ModelMatrix.M12;
-        _marshal1.m13 = _element.ModelMatrix.M13;
-        _marshal1.m21 = _element.ModelMatrix.M21;
-        _marshal1.m22 = _element.ModelMatrix.M22;
-        _marshal1.m23 = _element.ModelMatrix.M23;
-        _marshal1.m31 = _element.ModelMatrix.M31;
-        _marshal1.m32 = _element.ModelMatrix.M32;
-        _marshal1.m33 = _element.ModelMatrix.M33;
-        _marshal1.tx = _element.ModelMatrix.Tx;
-        _marshal1.ty = _element.ModelMatrix.Ty;
-        _marshal1.tz = _element.ModelMatrix.Tz;
-        _marshal0.modelMatrix = _marshal1;
-        _marshal0.priority = (::int32)(::int32_t)_element.Priority;
-        auto _marshalElement = _marshal0;
-        _tmpqueue.push_back(_marshalElement);
-    }
-    auto arg0 = _tmpqueue;
-    auto arg1 = (::Transform*)transform->NativePtr;
-    ((::Geometry*)NativePtr)->appendRenderables(arg0, arg1);
-}
-
 void Flood::Geometry::UpdateBounds()
 {
     ((::Geometry*)NativePtr)->updateBounds();
@@ -82,6 +50,11 @@ void Flood::Geometry::Update(float delta)
 void Flood::Geometry::RebuildBoundingBox()
 {
     ((::Geometry*)NativePtr)->rebuildBoundingBox();
+}
+
+void Flood::Geometry::NotifiesTransform()
+{
+    ((::Geometry*)NativePtr)->notifiesTransform();
 }
 
 bool Flood::Geometry::Equals(System::Object^ object)
@@ -98,18 +71,6 @@ int Flood::Geometry::GetHashCode()
     return (int)NativePtr;
 }
 
-System::Collections::Generic::List<Flood::RenderBatch^>^ Flood::Geometry::Renderables::get()
-{
-    auto __ret = ((::Geometry*)NativePtr)->getRenderables();
-    auto _tmp__ret = gcnew System::Collections::Generic::List<Flood::RenderBatch^>();
-    for(auto _element : __ret)
-    {
-        auto _marshalElement = gcnew Flood::RenderBatch((::RenderBatch*)_element.get());
-        _tmp__ret->Add(_marshalElement);
-    }
-    return _tmp__ret;
-}
-
 Flood::BoundingBox Flood::Geometry::BoundingVolume::get()
 {
     auto &__ret = ((::Geometry*)NativePtr)->getBoundingVolume();
@@ -120,5 +81,36 @@ Flood::BoundingBox Flood::Geometry::WorldBoundingVolume::get()
 {
     auto __ret = ((::Geometry*)NativePtr)->getWorldBoundingVolume();
     return Flood::BoundingBox((::BoundingBox*)&__ret);
+}
+
+Flood::BoundingBox Flood::Geometry::Bounds::get()
+{
+    return Flood::BoundingBox((::BoundingBox*)&((::Geometry*)NativePtr)->bounds);
+}
+
+void Flood::Geometry::Bounds::set(Flood::BoundingBox value)
+{
+    auto _marshal0 = ::BoundingBox();
+    auto _marshal1 = ::Vector3();
+    _marshal1.x = value.Min.X;
+    _marshal1.y = value.Min.Y;
+    _marshal1.z = value.Min.Z;
+    _marshal0.min = _marshal1;
+    auto _marshal2 = ::Vector3();
+    _marshal2.x = value.Max.X;
+    _marshal2.y = value.Max.Y;
+    _marshal2.z = value.Max.Z;
+    _marshal0.max = _marshal2;
+    ((::Geometry*)NativePtr)->bounds = _marshal0;
+}
+
+bool Flood::Geometry::NeedsBoundsRebuild::get()
+{
+    return ((::Geometry*)NativePtr)->needsBoundsRebuild;
+}
+
+void Flood::Geometry::NeedsBoundsRebuild::set(bool value)
+{
+    ((::Geometry*)NativePtr)->needsBoundsRebuild = value;
 }
 

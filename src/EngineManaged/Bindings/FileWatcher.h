@@ -12,10 +12,13 @@
 
 namespace Flood
 {
+    value struct FileWatchEvent;
     enum struct FileWatchEventKind;
     ref class FileWatcher;
-    value struct FileWatchEvent;
+}
 
+namespace Flood
+{
     public enum struct FileWatchEventKind
     {
         Added = 0,
@@ -30,12 +33,8 @@ namespace Flood
 
         FileWatchEvent(::FileWatchEvent* native);
         FileWatchEvent(System::IntPtr native);
-        FileWatchEvent(Flood::FileWatchEventKind _0, unsigned int _1, System::String^ dir, System::String^ file);
-
         Flood::FileWatchEventKind Action;
         unsigned int WatchId;
-        System::String^ Dir;
-        System::String^ Filename;
         System::IntPtr Userdata;
     };
 
@@ -70,10 +69,6 @@ namespace Flood
             void remove(System::Action<Flood::FileWatchEvent>^ evt);
             void raise(Flood::FileWatchEvent _0);
         }
-        virtual unsigned int AddWatch(System::String^ directory, System::IntPtr userdata);
-
-        virtual void RemoveWatch(System::String^ directory);
-
         virtual void RemoveWatch(unsigned int FileWatchId);
 
         virtual void Update();

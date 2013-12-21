@@ -14,8 +14,13 @@
 
 namespace Flood
 {
+    ref class ShaderMaterial;
+    ref class Resource;
     enum struct ResourceGroup;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Shaders are used to program the GPU programmable rendering pipeline. It is
     /// a set of software instructions that instruct how to calculate each vertex
@@ -29,6 +34,8 @@ namespace Flood
 
         ShaderMaterial(::ShaderMaterial* native);
         ShaderMaterial(System::IntPtr native);
+        ShaderMaterial();
+
         property System::String^ VertexSource
         {
             System::String^ get();

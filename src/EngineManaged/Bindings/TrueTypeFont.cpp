@@ -7,7 +7,6 @@
 
 #include "TrueTypeFont.h"
 #include "Font.h"
-#include "Platform.h"
 #include "Vector.h"
 
 using namespace System;
@@ -67,27 +66,5 @@ bool Flood::TrueTypeFont::Equals(System::Object^ object)
 int Flood::TrueTypeFont::GetHashCode()
 {
     return (int)NativePtr;
-}
-
-System::Collections::Generic::List<unsigned char>^ Flood::TrueTypeFont::Data::get()
-{
-    auto _tmpData = gcnew System::Collections::Generic::List<unsigned char>();
-    for(auto _element : ((::TrueTypeFont*)NativePtr)->data)
-    {
-        auto _marshalElement = _element;
-        _tmpData->Add(_marshalElement);
-    }
-    return _tmpData;
-}
-
-void Flood::TrueTypeFont::Data::set(System::Collections::Generic::List<unsigned char>^ value)
-{
-    auto _tmpvalue = std::vector<::byte>();
-    for each(unsigned char _element in value)
-    {
-        auto _marshalElement = (::byte)(::uint8)(::uint8_t)_element;
-        _tmpvalue.push_back(_marshalElement);
-    }
-    ((::TrueTypeFont*)NativePtr)->data = _tmpvalue;
 }
 

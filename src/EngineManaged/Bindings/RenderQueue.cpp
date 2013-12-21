@@ -10,6 +10,7 @@
 #include "RenderBatch.h"
 #include "Texture.h"
 #include "Transform.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -105,46 +106,3 @@ void Flood::RenderBlock::Instance::set(System::IntPtr object)
 {
     NativePtr = (::RenderBlock*)object.ToPointer();
 }
-
-System::Collections::Generic::List<Flood::RenderState>^ Flood::RenderBlock::Renderables::get()
-{
-    auto _tmpRenderables = gcnew System::Collections::Generic::List<Flood::RenderState>();
-    for(auto _element : ((::RenderBlock*)NativePtr)->renderables)
-    {
-        auto _marshalElement = Flood::RenderState((::RenderState*)&_element);
-        _tmpRenderables->Add(_marshalElement);
-    }
-    return _tmpRenderables;
-}
-
-void Flood::RenderBlock::Renderables::set(System::Collections::Generic::List<Flood::RenderState>^ value)
-{
-    auto _tmpvalue = std::vector<::RenderState>();
-    for each(Flood::RenderState _element in value)
-    {
-        auto _marshal0 = ::RenderState();
-        if (_element.Renderable != nullptr)
-            _marshal0.renderable = (::RenderBatch*)_element.Renderable->NativePtr;
-        if (_element.Material != nullptr)
-            _marshal0.material = (::Material*)_element.Material->NativePtr;
-        auto _marshal1 = ::Matrix4x3();
-        _marshal1.m11 = _element.ModelMatrix.M11;
-        _marshal1.m12 = _element.ModelMatrix.M12;
-        _marshal1.m13 = _element.ModelMatrix.M13;
-        _marshal1.m21 = _element.ModelMatrix.M21;
-        _marshal1.m22 = _element.ModelMatrix.M22;
-        _marshal1.m23 = _element.ModelMatrix.M23;
-        _marshal1.m31 = _element.ModelMatrix.M31;
-        _marshal1.m32 = _element.ModelMatrix.M32;
-        _marshal1.m33 = _element.ModelMatrix.M33;
-        _marshal1.tx = _element.ModelMatrix.Tx;
-        _marshal1.ty = _element.ModelMatrix.Ty;
-        _marshal1.tz = _element.ModelMatrix.Tz;
-        _marshal0.modelMatrix = _marshal1;
-        _marshal0.priority = (::int32)(::int32_t)_element.Priority;
-        auto _marshalElement = _marshal0;
-        _tmpvalue.push_back(_marshalElement);
-    }
-    ((::RenderBlock*)NativePtr)->renderables = _tmpvalue;
-}
-

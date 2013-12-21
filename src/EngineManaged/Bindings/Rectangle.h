@@ -14,7 +14,10 @@ namespace Flood
 {
     value struct Rectangle;
     value struct RectangleF;
+}
 
+namespace Flood
+{
     public value struct Rectangle
     {
     public:

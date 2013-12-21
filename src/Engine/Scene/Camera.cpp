@@ -19,17 +19,17 @@ NAMESPACE_ENGINE_BEGIN
 //-----------------------------------//
 
 REFLECT_CHILD_CLASS(Camera, Component)
-	FIELD_CLASS(4, Frustum, frustum)
-	FIELD_PRIMITIVE(5, bool, frustumCulling)
+    FIELD_CLASS(4, Frustum, frustum)
+    FIELD_PRIMITIVE(5, bool, frustumCulling)
 REFLECT_CLASS_END()
 
 //-----------------------------------//
 
 Camera::Camera()
-	: activeView(nullptr)
-	, frustumCulling(false)
-	, transform(nullptr)
-	, lookAtVector(Vector3::UnitZ)
+    : activeView(nullptr)
+    , frustumCulling(false)
+    , transform(nullptr)
+    , lookAtVector(Vector3::UnitZ)
 {
 }
 
@@ -37,205 +37,203 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-	if( !transform ) return;
-	transform->onTransformed.Disconnect( this, &Camera::onTransformed );
+    if( !transform ) return;
+    transform->onTransformed.Disconnect( this, &Camera::onTransformed );
 }
 
 //-----------------------------------//
 
 static Vector3 CalculateLookAtVector(Transform* transform)
 {
-	const Vector3& position = transform->getPosition();
-	const Quaternion& rotation = transform->getRotation();
-	
-	// Calculate the transform forward vector.
-	Vector3 forward = Matrix4x3::createFromQuaternion(rotation) * Vector3::UnitZ;
-	
-	return position + forward;
+    const Vector3& position = transform->getPosition();
+    const Quaternion& rotation = transform->getRotation();
+    
+    // Calculate the transform forward vector.
+    Vector3 forward = Matrix4x3::createFromQuaternion(rotation) * Vector3::UnitZ;
+    
+    return position + forward;
 }
 
 //-----------------------------------//
 
 void Camera::updateViewTransform()
 {
-	assert( transform != nullptr );
-	lookAtVector = CalculateLookAtVector(transform);
-	
-	// Update the view matrix.
-	viewMatrix = transform->lookAt( lookAtVector, Vector3::UnitY );
+    assert( transform != nullptr );
+    lookAtVector = CalculateLookAtVector(transform);
+    
+    // Update the view matrix.
+    viewMatrix = transform->lookAt( lookAtVector, Vector3::UnitY );
 
-	// Update the frustum planes.
-	frustum.updatePlanes( viewMatrix );
+    // Update the frustum planes.
+    frustum.updatePlanes( viewMatrix );
 }
 
 //-----------------------------------//
 
 void Camera::updateFrustum()
 {
-	if( !activeView ) return;
+    if( !activeView ) return;
 
-	// Update frustum matrices.
-	frustum.aspectRatio = activeView->getAspectRatio();
-	frustum.orthoSize = activeView->getSize();
-	frustum.updateProjection();
-	frustum.updatePlanes( viewMatrix );
+    // Update frustum matrices.
+    frustum.aspectRatio = activeView->getAspectRatio();
+    frustum.orthoSize = activeView->getSize();
+    frustum.updateProjection();
+    frustum.updatePlanes( viewMatrix );
 }
 
 //-----------------------------------//
 
 void Camera::setView( RenderView* view )
 {
-	if( !view ) return;
+    if( !view ) return;
 
-	activeView = view;
-	activeView->viewMatrix = viewMatrix;
-	activeView->projectionMatrix = frustum.matProjection;
+    activeView = view;
+    activeView->viewMatrix = viewMatrix;
+    activeView->projectionMatrix = frustum.matProjection;
 
-	updateFrustum();
+    updateFrustum();
 }
 
 //-----------------------------------//
 
 void Camera::update( float )
 {
-	if( !activeView ) return;
+    if( !activeView ) return;
 
-	drawer.reset();
-	bool frustumUpdated = false;
+    drawer.reset();
+    bool frustumUpdated = false;
 
-	if( !frustumUpdated)
-		updateFrustum();
+    if( !frustumUpdated)
+        updateFrustum();
 
-	// Only run the following code once.
-	if( transform ) return;
+    // Only run the following code once.
+    if( transform ) return;
 
-	transform = getEntity()->getTransform().get();
-	transform->onTransformed.Connect( this, &Camera::onTransformed );
+    transform = getEntity()->getTransform().get();
+    transform->onTransformed.Connect( this, &Camera::onTransformed );
 
-	// Update the view transform the first update.
-	updateViewTransform();
+    // Update the view transform the first update.
+    updateViewTransform();
 }
 
 //-----------------------------------//
 
 void Camera::onTransformed()
 {
-	updateViewTransform();
+    updateViewTransform();
 }
 
 //-----------------------------------//
 
 void Camera::render( const Scene* scene )
 {
-	// This will contain all nodes used for rendering.
-	RenderBlock renderBlock;
+    // This will contain all nodes used for rendering.
+    RenderBlock renderBlock;
 
-	// Perform frustum culling.
-	cull( renderBlock, &scene->entities );
+    // Perform frustum culling.
+    cull( renderBlock, &scene->entities );
 
-	// Submits the geometry to the renderer.
-	render( renderBlock );
+    // Submits the geometry to the renderer.
+    render( renderBlock );
 }
 
 //-----------------------------------//
 
 void Camera::render( RenderBlock& block, bool clearView )
 {
-	if( !activeView ) return;
-	
-	RenderDevice* renderDevice = GetRenderDevice();
-	renderDevice->setActiveView( activeView );
+    if( !activeView ) return;
+    
+    RenderDevice* renderDevice = GetRenderDevice();
+    renderDevice->setActiveView( activeView );
 
-	if( clearView )
-		renderDevice->clearView();
+    if( clearView )
+        renderDevice->clearView();
+    for (auto it= drawer.renderables.end() -1;it >= drawer.renderables.begin();--it)
+        block.renderables.Insert(block.renderables.begin(), *it);
 
-	block.renderables.insert(
-		block.renderables.begin(),
-		drawer.renderables.begin(),
-		drawer.renderables.end() );
 
-	renderDevice->render( block );
+    renderDevice->render( block );
 }
 
 //-----------------------------------//
 
 void Camera::cull( RenderBlock& block, const Entity* entity )
 {
-	if( !entity ) return;
+    if( !entity ) return;
 
-	// Try to see if this is a Group-derived node.
-	Class* klass = entity->getType();
-	
-	if( ClassInherits(klass, ReflectionGetType(Group)) )
-	{
-		const Group* group = (Group*) entity;
+    // Try to see if this is a Group-derived node.
+    Class* klass = entity->getType();
+    
+    if( ClassInherits(klass, ReflectionGetType(Group)) )
+    {
+        const Group* group = (Group*) entity;
 
-		const std::vector<EntityPtr>& entities = group->getEntities();
+        const Vector<EntityPtr>& entities = group->getEntities();
 
-		// Cull the children entities recursively.
-		for( size_t i = 0; i < entities.size(); i++ )
-		{
-			const Entity* child = entities[i].get();
-			cull( block, child );
-		}
+        // Cull the children entities recursively.
+        for( size_t i = 0; i < entities.Size(); i++ )
+        {
+            const Entity* child = entities[i].get();
+            cull( block, child );
+        }
 
-		return;
-	}
+        return;
+    }
 
-	// If this is a visible.renderable object, then we perform frustum culling
-	// and then we push it to a list of things passed later to the renderer.
+    // If this is a visible.renderable object, then we perform frustum culling
+    // and then we push it to a list of things passed later to the renderer.
 
-	//entity->onPreCull();
+    //entity->onPreCull();
 
-	if( !entity->isVisible() )
-		return;
+    if( !entity->isVisible() )
+        return;
 
-	const Transform* transform = entity->getTransform().get();
-	const BoundingBox& box = transform->getWorldBoundingVolume();
+    const Transform* transform = entity->getTransform().get();
+    const BoundingBox& box = transform->getWorldBoundingVolume();
 
-	bool isCulled = !entity->getTag(Tags::NonCulled);
-	
-	if( frustumCulling && isCulled && !frustum.intersects(box) )
-		return;
+    bool isCulled = !entity->getTag(Tags::NonCulled);
+    
+    if( frustumCulling && isCulled && !frustum.intersects(box) )
+        return;
 
-	#pragma TODO("Fix multiple geometry instancing")
+    #pragma TODO("Fix multiple geometry instancing")
 
-	const std::vector<GeometryPtr>& geoms = entity->getGeometry();
+    const Vector<GeometryPtr>& geoms = entity->getGeometry();
 
-	for( size_t i = 0; i < geoms.size(); i++ )
-	{
-		const GeometryPtr& geometry = geoms[i];
-		geometry->appendRenderables( block.renderables, transform );
-	}
+    for( size_t i = 0; i < geoms.Size(); i++ )
+    {
+        const GeometryPtr& geometry = geoms[i];
+        geometry->appendRenderables( block.renderables, transform );
+    }
 
 #if 0
-	const LightPtr& light = entity->getComponent<Light>();
-	
-	if( light ) 
-	{
-		LightState ls;
-		ls.light = light.get();
-		ls.transform = transform.get();
-	
-		block.lights.push_back( ls );
-	}
+    const LightPtr& light = entity->getComponent<Light>();
+    
+    if( light ) 
+    {
+        LightState ls;
+        ls.light = light.get();
+        ls.transform = transform.get();
+    
+        block.lights.Push( ls );
+    }
 #endif
 
 #ifdef BUILD_DEBUG
-	const ComponentMap& components = entity->getComponents();
-	ComponentMap::const_iterator it;
-	
-	for( it = components.begin(); it != components.end(); it++ )
-	{
-		const ComponentPtr& component = it->second;
-		component->onPreRender(*this);
+    const ComponentMap& components = entity->getComponents();
+    ComponentMap::ConstIterator it;
+    
+    for( it = components.Begin(); it != components.End(); it++ )
+    {
+        const ComponentPtr& component = it->second;
+        component->onPreRender(*this);
 
-		if( !component->isDebugRenderableVisible() )
-			continue;
+        if( !component->isDebugRenderableVisible() )
+            continue;
 
-		DebugDrawFlags flags = (DebugDrawFlags) 0;
-		component->onDebugDraw(drawer, flags);
-	}
+        DebugDrawFlags flags = (DebugDrawFlags) 0;
+        component->onDebugDraw(drawer, flags);
+    }
 #endif
 }
 
@@ -243,120 +241,120 @@ void Camera::cull( RenderBlock& block, const Entity* entity )
 
 static Vector3 UnprojectViewPoint( const Vector3& screen, const RenderView* view, const Camera* camera )
 {
-	Matrix4x4 matView = camera->getViewMatrix();
-	const Matrix4x4& matProjection = camera->getFrustum().matProjection;
-	Matrix4x4 matInverseViewProjection = (matView * matProjection).inverse();
+    Matrix4x4 matView = camera->getViewMatrix();
+    const Matrix4x4& matProjection = camera->getFrustum().matProjection;
+    Matrix4x4 matInverseViewProjection = (matView * matProjection).inverse();
 
-	const Vector2i& size = view->getSize();
+    const Vector2i& size = view->getSize();
 
-	// Map x and y from window coordinates, map to range -1 to 1.
+    // Map x and y from window coordinates, map to range -1 to 1.
 
-	Vector4 pos;
-	pos.x = (screen.x /*- offset.x*/) / float(size.x) * 2.0f - 1.0f;
-	pos.y = (screen.y /*- offset.y*/) / float(size.y) * 2.0f - 1.0f;
-	pos.z = screen.z * 2.0f - 1.0f;
-	pos.w = 1.0f;
+    Vector4 pos;
+    pos.x = (screen.x /*- offset.x*/) / float(size.x) * 2.0f - 1.0f;
+    pos.y = (screen.y /*- offset.y*/) / float(size.y) * 2.0f - 1.0f;
+    pos.z = screen.z * 2.0f - 1.0f;
+    pos.w = 1.0f;
  
-	Vector4 pos2 = matInverseViewProjection * pos;
-	Vector3 out( pos2.x, pos2.y, pos2.z );
+    Vector4 pos2 = matInverseViewProjection * pos;
+    Vector3 out( pos2.x, pos2.y, pos2.z );
  
-	return out / pos2.w;
+    return out / pos2.w;
 }
 
 //-----------------------------------//
 
 Ray Camera::getRay( float screenX, float screenY, Vector3* outFar ) const
 {
-	//assert( activeView != nullptr );
-	if( !activeView ) return Ray();
-	
-	Vector2i size = activeView->getSize();
+    //assert( activeView != nullptr );
+    if( !activeView ) return Ray();
+    
+    Vector2i size = activeView->getSize();
 
-	Vector3 nearPoint(screenX, size.y - screenY, 0);
-	Vector3 farPoint (screenX, size.y - screenY, 1);
+    Vector3 nearPoint(screenX, size.y - screenY, 0);
+    Vector3 farPoint (screenX, size.y - screenY, 1);
 
-	Vector3 rayOrigin = UnprojectViewPoint(nearPoint, activeView, this);
-	Vector3 rayTarget = UnprojectViewPoint(farPoint, activeView, this);
-	
-	Vector3 rayDirection = rayTarget - rayOrigin;
-	rayDirection.normalize();
+    Vector3 rayOrigin = UnprojectViewPoint(nearPoint, activeView, this);
+    Vector3 rayTarget = UnprojectViewPoint(farPoint, activeView, this);
+    
+    Vector3 rayDirection = rayTarget - rayOrigin;
+    rayDirection.normalize();
 
-	if( outFar != nullptr ) *outFar = rayTarget;
+    if( outFar != nullptr ) *outFar = rayTarget;
 
-	Ray pickRay(rayOrigin, rayDirection);
-	return pickRay;
+    Ray pickRay(rayOrigin, rayDirection);
+    return pickRay;
 }
 
 //-----------------------------------//
 
 Frustum Camera::getVolume( float screenLeft, float screenRight, float screenTop, float screenBottom )
 {
-	const Transform* transform = getEntity()->getTransform().get();
-	const Vector3& pos = transform->getPosition();
+    const Transform* transform = getEntity()->getTransform().get();
+    const Vector3& pos = transform->getPosition();
 
-	Frustum volume;
+    Frustum volume;
 
-	if(frustum.projection == FrustumProjection::Perspective)
-	{
-		Ray ul = getRay(screenLeft, screenTop);
-		Ray ur = getRay(screenRight, screenTop);
-		Ray bl = getRay(screenLeft, screenBottom);
-		Ray br = getRay(screenRight, screenBottom);
+    if(frustum.projection == FrustumProjection::Perspective)
+    {
+        Ray ul = getRay(screenLeft, screenTop);
+        Ray ur = getRay(screenRight, screenTop);
+        Ray bl = getRay(screenLeft, screenBottom);
+        Ray br = getRay(screenRight, screenBottom);
 
-		Vector3 normal;
-		
-		// Planes order: Left, Right, Top, Bottom, Near, Far.
+        Vector3 normal;
+        
+        // Planes order: Left, Right, Top, Bottom, Near, Far.
 
-		// Left plane
-		normal = bl.direction.cross(ul.direction);
-		volume.planes[0] = Plane(normal, pos);
+        // Left plane
+        normal = bl.direction.cross(ul.direction);
+        volume.planes[0] = Plane(normal, pos);
 
-		// Right plane
-		normal = ur.direction.cross(br.direction);
-		volume.planes[1] = Plane(normal, pos);
+        // Right plane
+        normal = ur.direction.cross(br.direction);
+        volume.planes[1] = Plane(normal, pos);
 
-		// Top plane
-		normal = ul.direction.cross(ur.direction);
-		volume.planes[2] = Plane(normal, pos);
+        // Top plane
+        normal = ul.direction.cross(ur.direction);
+        volume.planes[2] = Plane(normal, pos);
 
-		// Bottom plane
-		normal = br.direction.cross(bl.direction);
-		volume.planes[3] = Plane(normal, pos);
-	}
-	else
-	{
-		// Ortho planes are parallel to frustum planes
-		Ray ul = getRay(screenLeft, screenTop);
-		Ray br = getRay(screenRight, screenBottom);
+        // Bottom plane
+        normal = br.direction.cross(bl.direction);
+        volume.planes[3] = Plane(normal, pos);
+    }
+    else
+    {
+        // Ortho planes are parallel to frustum planes
+        Ray ul = getRay(screenLeft, screenTop);
+        Ray br = getRay(screenRight, screenBottom);
 
-		volume.planes[0] = Plane(frustum.planes[0].normal, ul.origin);
-		volume.planes[1] = Plane(frustum.planes[1].normal, br.origin);
-		volume.planes[2] = Plane(frustum.planes[2].normal, ul.origin);
-		volume.planes[3] = Plane(frustum.planes[3].normal, br.origin);
-	}
+        volume.planes[0] = Plane(frustum.planes[0].normal, ul.origin);
+        volume.planes[1] = Plane(frustum.planes[1].normal, br.origin);
+        volume.planes[2] = Plane(frustum.planes[2].normal, ul.origin);
+        volume.planes[3] = Plane(frustum.planes[3].normal, br.origin);
+    }
 
-	// Near & Far plane applicable to both projection types
-	volume.planes[4] = frustum.planes[4];
-	volume.planes[5] = frustum.planes[5];
+    // Near & Far plane applicable to both projection types
+    volume.planes[4] = frustum.planes[4];
+    volume.planes[5] = frustum.planes[5];
 
-	return volume;
+    return volume;
 }
 
 //-----------------------------------//
 
 static Frustum CalculateWorldFrustum(const Transform* transform, Frustum local)
 {
-	const Matrix4x3& absolute = transform->getAbsoluteTransform();
+    const Matrix4x3& absolute = transform->getAbsoluteTransform();
 
-	for(size_t i = 0; i < FLD_ARRAY_SIZE(local.corners); i++)
-		local.corners[i] = absolute * local.corners[i];
+    for(size_t i = 0; i < FLD_ARRAY_SIZE(local.corners); i++)
+        local.corners[i] = absolute * local.corners[i];
 
-	return local;
+    return local;
 }
 
 void Camera::onDebugDraw( DebugDrawer& debug, DebugDrawFlags )
 {
-	debug.drawFrustum( CalculateWorldFrustum(transform, frustum) );
+    debug.drawFrustum( CalculateWorldFrustum(transform, frustum) );
 }
 
 //-----------------------------------//

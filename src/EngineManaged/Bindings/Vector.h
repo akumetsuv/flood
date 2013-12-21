@@ -12,11 +12,14 @@
 
 namespace Flood
 {
-    value struct Vector2;
-    value struct Vector2i;
     value struct Vector3;
     value struct Vector4;
+    value struct Vector2;
+    value struct Vector2i;
+}
 
+namespace Flood
+{
     public value struct Vector3
     {
     public:
@@ -180,6 +183,8 @@ namespace Flood
 
         static Flood::Vector2 operator/(Flood::Vector2 __op, int s);
 
+        static operator Flood::Vector3(Flood::Vector2 __op);
+
         void SetZero();
 
         static property Flood::Vector2 Zero
@@ -206,6 +211,8 @@ namespace Flood
 
         int X;
         int Y;
+        static operator Flood::Vector3(Flood::Vector2i __op);
+
         static bool operator==(Flood::Vector2i __op, Flood::Vector2i v);
 
         static bool operator!=(Flood::Vector2i __op, Flood::Vector2i v);

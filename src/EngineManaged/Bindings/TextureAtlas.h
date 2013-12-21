@@ -15,11 +15,16 @@
 
 namespace Flood
 {
-    enum struct PixelFormat;
-    ref class TextureAtlas;
-    value struct Rectangle;
     value struct SubTexture;
+    value struct Vector2;
+    ref class TextureAtlas;
+    ref class Image;
+    enum struct PixelFormat;
+    value struct Rectangle;
+}
 
+namespace Flood
+{
     public value struct SubTexture
     {
     public:

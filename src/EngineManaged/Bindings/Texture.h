@@ -14,15 +14,19 @@
 
 namespace Flood
 {
+    ref class Texture;
+    enum struct TextureTarget;
     enum struct PixelFormat;
+    ref class Image;
+    value struct Vector2i;
+    ref class TextureUnit;
     enum struct TextureFilterMode;
     enum struct TextureMipMode;
-    enum struct TextureTarget;
     enum struct TextureWrapMode;
-    ref class Texture;
-    ref class TextureUnit;
-    value struct Vector2i;
+}
 
+namespace Flood
+{
     public enum struct TextureFilterMode
     {
         Nearest = 0,
@@ -43,12 +47,6 @@ namespace Flood
         ClampToEdge = 3
     };
 
-    /// <summary>
-    /// Represents a texture on the rendering API. This will be basically an the
-    /// same content of a resource image stored on the graphics card, but it is not
-    /// guaranteed that the GPU internal format will be the same. You can also
-    /// create textures that are not backed by an image.
-    /// </summary>
     public enum struct TextureTarget
     {
         Target2D = 0,
@@ -86,11 +84,6 @@ namespace Flood
         property unsigned int ExpectedSize
         {
             unsigned int get();
-        }
-        property unsigned int Id1
-        {
-            unsigned int get();
-            void set(unsigned int);
         }
         property Flood::TextureTarget Target
         {
@@ -175,6 +168,21 @@ namespace Flood
         {
             bool get();
             void set(bool);
+        }
+        property Flood::TextureFilterMode Filter
+        {
+            Flood::TextureFilterMode get();
+            void set(Flood::TextureFilterMode);
+        }
+        property Flood::TextureMipMode Mip
+        {
+            Flood::TextureMipMode get();
+            void set(Flood::TextureMipMode);
+        }
+        property Flood::TextureWrapMode Wrap
+        {
+            Flood::TextureWrapMode get();
+            void set(Flood::TextureWrapMode);
         }
         virtual bool Equals(System::Object^ object) override;
 

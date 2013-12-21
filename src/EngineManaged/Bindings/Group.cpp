@@ -8,57 +8,25 @@
 #include "Group.h"
 #include "Component.h"
 #include "Entity.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
 Flood::Group::Group(::Group* native)
-    : Flood::Entity((::Entity*)native)
 {
+    NativePtr = native;
 }
 
 Flood::Group::Group(System::IntPtr native)
-    : Flood::Entity(native)
 {
     auto __native = (::Group*)native.ToPointer();
+    NativePtr = __native;
 }
 
 Flood::Group::Group()
-    : Flood::Entity((::Entity*)nullptr)
 {
     NativePtr = new ::Group();
-}
-
-Flood::Group::Group(System::String^ name)
-    : Flood::Entity((::Entity*)nullptr)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
-    NativePtr = new ::Group(arg0);
-}
-
-void Flood::Group::Add(Flood::Entity^ entity)
-{
-    auto arg0 = (::Entity*)entity->NativePtr;
-    ((::Group*)NativePtr)->add(arg0);
-}
-
-bool Flood::Group::Remove(Flood::Entity^ entity)
-{
-    auto arg0 = (::Entity*)entity->NativePtr;
-    auto __ret = ((::Group*)NativePtr)->remove(arg0);
-    return __ret;
-}
-
-Flood::Entity^ Flood::Group::FindEntity(System::String^ name)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
-    auto __ret = ((::Group*)NativePtr)->findEntity(arg0);
-    return gcnew Flood::Entity((::Entity*)__ret.get());
-}
-
-void Flood::Group::Update(float delta)
-{
-    ((::Group*)NativePtr)->update(delta);
 }
 
 bool Flood::Group::Equals(System::Object^ object)
@@ -75,70 +43,15 @@ int Flood::Group::GetHashCode()
     return (int)NativePtr;
 }
 
-System::Collections::Generic::List<Flood::Entity^>^ Flood::Group::Entities::get()
+System::IntPtr Flood::Group::Instance::get()
 {
-    auto &__ret = ((::Group*)NativePtr)->getEntities();
-    auto _tmp__ret = gcnew System::Collections::Generic::List<Flood::Entity^>();
-    for(auto _element : __ret)
-    {
-        auto _marshalElement = gcnew Flood::Entity((::Entity*)_element.get());
-        _tmp__ret->Add(_marshalElement);
-    }
-    return _tmp__ret;
+    return System::IntPtr(NativePtr);
 }
 
-void Flood::Group::EntityAdded::add(System::Action<Flood::Entity^>^ evt)
+void Flood::Group::Instance::set(System::IntPtr object)
 {
-    if (!_EntityAddedDelegateInstance)
-    {
-        _EntityAddedDelegateInstance = gcnew _EntityAddedDelegate(this, &Flood::Group::_EntityAddedRaise);
-        auto _fptr = (void (*)(const ::EntityPtr&))Marshal::GetFunctionPointerForDelegate(_EntityAddedDelegateInstance).ToPointer();
-        ((::Group*)NativePtr)->onEntityAdded.Connect(_fptr);
-    }
-    _EntityAdded = static_cast<System::Action<Flood::Entity^>^>(System::Delegate::Combine(_EntityAdded, evt));
+    NativePtr = (::Group*)object.ToPointer();
 }
-
-void Flood::Group::EntityAdded::remove(System::Action<Flood::Entity^>^ evt)
-{
-    _EntityAdded = static_cast<System::Action<Flood::Entity^>^>(System::Delegate::Remove(_EntityAdded, evt));
-}
-
-void Flood::Group::EntityAdded::raise(Flood::Entity^ _0)
-{
-    _EntityAdded(_0);
-}
-
-void Flood::Group::_EntityAddedRaise(const ::EntityPtr& _0)
-{
-    EntityAdded::raise(gcnew Flood::Entity((::Entity*)_0.get()));
-}
-
-void Flood::Group::EntityRemoved::add(System::Action<Flood::Entity^>^ evt)
-{
-    if (!_EntityRemovedDelegateInstance)
-    {
-        _EntityRemovedDelegateInstance = gcnew _EntityRemovedDelegate(this, &Flood::Group::_EntityRemovedRaise);
-        auto _fptr = (void (*)(const ::EntityPtr&))Marshal::GetFunctionPointerForDelegate(_EntityRemovedDelegateInstance).ToPointer();
-        ((::Group*)NativePtr)->onEntityRemoved.Connect(_fptr);
-    }
-    _EntityRemoved = static_cast<System::Action<Flood::Entity^>^>(System::Delegate::Combine(_EntityRemoved, evt));
-}
-
-void Flood::Group::EntityRemoved::remove(System::Action<Flood::Entity^>^ evt)
-{
-    _EntityRemoved = static_cast<System::Action<Flood::Entity^>^>(System::Delegate::Remove(_EntityRemoved, evt));
-}
-
-void Flood::Group::EntityRemoved::raise(Flood::Entity^ _1)
-{
-    _EntityRemoved(_1);
-}
-
-void Flood::Group::_EntityRemovedRaise(const ::EntityPtr& _1)
-{
-    EntityRemoved::raise(gcnew Flood::Entity((::Entity*)_1.get()));
-}
-
 void Flood::Group::EntityComponentAdded::add(System::Action<Flood::Component^>^ evt)
 {
     if (!_EntityComponentAddedDelegateInstance)

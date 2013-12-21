@@ -25,8 +25,8 @@ FL_INSTANTIATE_TEMPLATES()
 
 static void ReferenceProcessors()
 {
-	MeshProcessorGetType();
-	ImageProcessorGetType();
+    MeshProcessorGetType();
+    ImageProcessorGetType();
 }
 
 //-----------------------------------//
@@ -34,11 +34,11 @@ static void ReferenceProcessors()
 static void ReferenceImporters()
 {
 #ifdef ENABLE_IMPORTER_MILKSHAPE
-	ImporterMilkshapeGetType();
+    ImporterMilkshapeGetType();
 #endif
 
 #ifdef ENABLE_IMPORTER_FBX
-	ImporterFBXGetType();
+    ImporterFBXGetType();
 #endif
 }
 
@@ -46,48 +46,48 @@ static void ReferenceImporters()
 
 void PipelineInit()
 {
-	ReferenceProcessors();
-	ReferenceImporters();
+    ReferenceProcessors();
+    ReferenceImporters();
 
-	Class* klass = ResourceProcessorGetType();
-	
-	for( size_t i = 0; i < klass->childs.size(); i++ )
-	{
-		Class* child = klass->childs[i];
-		
-		ResourceProcessor* processor = (ResourceProcessor*) ClassCreateInstance(child, AllocatorGetHeap());
-		resourceProcessors.push_back(processor);
+    Class* klass = ResourceProcessorGetType();
+    
+    for( size_t i = 0; i < klass->childs.Size(); i++ )
+    {
+        Class* child = klass->childs[i];
+        
+        ResourceProcessor* processor = (ResourceProcessor*) ClassCreateInstance(child, AllocatorGetHeap());
+        resourceProcessors.Push(processor);
 
-		LogInfo("Registering asset handler: %s", child->name);
-	}
+        LogInfo("Registering asset handler: %s", child->name);
+    }
 }
 
 //-----------------------------------//
 
 void PipelineCleanup()
 {
-	for( size_t i = 0; i < resourceProcessors.size(); i++ )
-	{
-		ResourceProcessor* processor = resourceProcessors[i];
-		Deallocate(processor);
-	}
+    for( size_t i = 0; i < resourceProcessors.Size(); i++ )
+    {
+        ResourceProcessor* processor = resourceProcessors[i];
+        Deallocate(processor);
+    }
 
-	resourceProcessors.clear();
+    resourceProcessors.Clear();
 }
 
 //-----------------------------------//
 
 ResourceProcessor* PipelineFindProcessor(Class* type)
 {
-	for( size_t i = 0; i < resourceProcessors.size(); i++ )
-	{
-		ResourceProcessor* processor = resourceProcessors[i];
-		
-		bool isProcessor = ClassInherits(type, processor->GetResourceType());
-		if( isProcessor ) return processor;
-	}
+    for( size_t i = 0; i < resourceProcessors.Size(); i++ )
+    {
+        ResourceProcessor* processor = resourceProcessors[i];
+        
+        bool isProcessor = ClassInherits(type, processor->GetResourceType());
+        if( isProcessor ) return processor;
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
 //-----------------------------------//
@@ -102,44 +102,44 @@ ResourceManager* resources;
 
 void showResourceLoaders()
 {
-	printf("\nKnown resource loaders:\n\n");
+    printf("\nKnown resource loaders:\n\n");
 
-	Class& type = ResourceLoader::getStaticType();
-	
-	for( size_t i = 0; i < type.childs.size(); i++ )
-	{
-		Class& child = *type.childs[i];
-		printf("\t%s\n", child.name.c_str());
-	} 
+    Class& type = ResourceLoader::getStaticType();
+    
+    for( size_t i = 0; i < type.childs.Size(); i++ )
+    {
+        Class& child = *type.childs[i];
+        printf("\t%s\n", child.name.c_str());
+    } 
 }
 
 //-----------------------------------//
 
 void showResourceProcessors()
 {
-	printf("\nKnown resource processors:\n\n");
+    printf("\nKnown resource processors:\n\n");
 
-	Class& type = ResourceProcessor::getStaticType();
-	
-	for( size_t i = 0; i < type.childs.size(); i++ )
-	{
-		Class& child = *type.childs[i];
-		printf("\t%s\n", child.name.c_str());
-	}
+    Class& type = ResourceProcessor::getStaticType();
+    
+    for( size_t i = 0; i < type.childs.Size(); i++ )
+    {
+        Class& child = *type.childs[i];
+        printf("\t%s\n", child.name.c_str());
+    }
 }
 
 //-----------------------------------//
 
 int main(int argc, char* argv[])
 {
-	printf("Syntax: Pipeline.exe -in res.foo -out res.bar\n");
+    printf("Syntax: Pipeline.exe -in res.foo -out res.bar\n");
 
-	resources = new ResourceManager();
+    resources = new ResourceManager();
 
-	showResourceLoaders();
-	showResourceProcessors();
+    showResourceLoaders();
+    showResourceProcessors();
 
-	return 0;
+    return 0;
 }
 
 //-----------------------------------//

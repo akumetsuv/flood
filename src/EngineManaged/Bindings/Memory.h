@@ -12,91 +12,28 @@
 
 namespace Flood
 {
-    ref class Allocator;
+    ref class PoolAllocator;
     ref class BumpAllocator;
     ref class HeapAllocator;
-    ref class PoolAllocator;
+}
 
-    public delegate System::IntPtr MemoryAllocateFunction(Flood::Allocator^ _0, int size, int align);
-
-    public delegate void MemoryFreeFunction(Flood::Allocator^ _1, System::IntPtr object);
-
-    public delegate void MemoryResetFunction(Flood::Allocator^ _2);
-
-    /// <summary>
-    /// Interface for a custom memory allocator.
-    /// </summary>
-    public ref class Allocator : ICppInstance
-    {
-    public:
-
-        property ::Allocator* NativePtr;
-        property System::IntPtr Instance
-        {
-            virtual System::IntPtr get();
-            virtual void set(System::IntPtr instance);
-        }
-
-        Allocator(::Allocator* native);
-        Allocator(System::IntPtr native);
-        Allocator();
-
-        property Flood::MemoryAllocateFunction^ Allocate
-        {
-            Flood::MemoryAllocateFunction^ get();
-            void set(Flood::MemoryAllocateFunction^);
-        }
-        property Flood::MemoryFreeFunction^ Deallocate
-        {
-            Flood::MemoryFreeFunction^ get();
-            void set(Flood::MemoryFreeFunction^);
-        }
-        property Flood::MemoryResetFunction^ Reset
-        {
-            Flood::MemoryResetFunction^ get();
-            void set(Flood::MemoryResetFunction^);
-        }
-        property System::String^ Group
-        {
-            System::String^ get();
-            void set(System::String^);
-        }
-        virtual bool Equals(System::Object^ object) override;
-
-        virtual int GetHashCode() override;
-
-        void Destroy();
-
-        void ResetMemory();
-
-        void SetGroup(System::String^ group);
-
-        Flood::Allocator^ CreatePool(int size);
-
-        Flood::Allocator^ CreateBump(int size);
-
-        Flood::Allocator^ CreateHeap();
-
-        Flood::Allocator^ CreateStack();
-
-        static Flood::Allocator^ GetHeap();
-
-        static Flood::Allocator^ GetStack();
-
-        static Flood::Allocator^ GetObject(System::IntPtr _0);
-
-        static void DumpInfo();
-
-    };
-
+namespace Flood
+{
     /// <summary>
     /// Manages memory allocation using a fixed-size object pool. When a new
     /// allocation is requested, we search for the first free object available and
     /// return it.
     /// </summary>
-    public ref class PoolAllocator : Flood::Allocator
+    public ref class PoolAllocator : ICppInstance
     {
     public:
+
+        property ::PoolAllocator* NativePtr;
+        property System::IntPtr Instance
+        {
+            virtual System::IntPtr get();
+            virtual void set(System::IntPtr instance);
+        }
 
         PoolAllocator(::PoolAllocator* native);
         PoolAllocator(System::IntPtr native);
@@ -118,9 +55,16 @@ namespace Flood
     /// allocations and deallocations in O(1). The allocated space in the buffer is
     /// not re-used until the whole buffer is reset.
     /// </summary>
-    public ref class BumpAllocator : Flood::Allocator
+    public ref class BumpAllocator : ICppInstance
     {
     public:
+
+        property ::BumpAllocator* NativePtr;
+        property System::IntPtr Instance
+        {
+            virtual System::IntPtr get();
+            virtual void set(System::IntPtr instance);
+        }
 
         BumpAllocator(::BumpAllocator* native);
         BumpAllocator(System::IntPtr native);
@@ -152,9 +96,16 @@ namespace Flood
     /// boundary-tag allocator that manages memory by keeping track of the
     /// used/free memory blocks.
     /// </summary>
-    public ref class HeapAllocator : Flood::Allocator
+    public ref class HeapAllocator : ICppInstance
     {
     public:
+
+        property ::HeapAllocator* NativePtr;
+        property System::IntPtr Instance
+        {
+            virtual System::IntPtr get();
+            virtual void set(System::IntPtr instance);
+        }
 
         HeapAllocator(::HeapAllocator* native);
         HeapAllocator(System::IntPtr native);

@@ -81,6 +81,11 @@ void Flood::RenderTarget::Update()
     ((::RenderTarget*)NativePtr)->update();
 }
 
+void Flood::RenderTarget::HandleResize()
+{
+    ((::RenderTarget*)NativePtr)->handleResize();
+}
+
 bool Flood::RenderTarget::Equals(System::Object^ object)
 {
     if (!object) return false;
@@ -125,18 +130,6 @@ void Flood::RenderTarget::Context::set(Flood::RenderContext^ value)
     ((::RenderTarget*)NativePtr)->setContext(arg0);
 }
 
-System::Collections::Generic::List<Flood::RenderView^>^ Flood::RenderTarget::Views::get()
-{
-    auto &__ret = ((::RenderTarget*)NativePtr)->getViews();
-    auto _tmp__ret = gcnew System::Collections::Generic::List<Flood::RenderView^>();
-    for(auto _element : __ret)
-    {
-        auto _marshalElement = gcnew Flood::RenderView((::RenderView*)_element);
-        _tmp__ret->Add(_marshalElement);
-    }
-    return _tmp__ret;
-}
-
 System::IntPtr Flood::RenderTarget::UserData::get()
 {
     auto __ret = ((::RenderTarget*)NativePtr)->getUserData();
@@ -149,6 +142,16 @@ void Flood::RenderTarget::UserData::set(System::IntPtr value)
     auto v = value;
     auto arg0 = (void*)v.ToPointer();
     ((::RenderTarget*)NativePtr)->setUserData(arg0);
+}
+
+Flood::RenderContext^ Flood::RenderTarget::Context1::get()
+{
+    return gcnew Flood::RenderContext((::RenderContext*)((::RenderTarget*)NativePtr)->context.get());
+}
+
+void Flood::RenderTarget::Context1::set(Flood::RenderContext^ value)
+{
+    ((::RenderTarget*)NativePtr)->context = (::RenderContext*)value->NativePtr;
 }
 
 void Flood::RenderTarget::TargetResize::add(System::Action<Flood::Settings>^ evt)

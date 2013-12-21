@@ -16,16 +16,23 @@
 
 namespace Flood
 {
-    enum struct DebugDrawFlags : unsigned char;
-    ref class Camera;
-    ref class DebugDrawer;
-    ref class Entity;
-    ref class RenderBlock;
-    ref class RenderDevice;
-    ref class RenderView;
     ref class Transform;
-    value struct Ray;
+    ref class Scene;
+    ref class RenderView;
+    ref class RenderDevice;
+    ref class RenderBlock;
+    ref class Camera;
+    ref class Component;
+    ref class DebugDrawer;
+    value struct Frustum;
+    value struct Vector3;
+    value struct Matrix4x3;
+    ref class Entity;
+    enum struct DebugDrawFlags : unsigned char;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Represents a view from a specific point in the world. Has an associated
     /// projection type, like ortographic or perspective and also holds a frustum
@@ -66,17 +73,51 @@ namespace Flood
             Flood::DebugDrawer^ get();
             void set(Flood::DebugDrawer^);
         }
+        property Flood::Frustum Frustum2
+        {
+            Flood::Frustum get();
+            void set(Flood::Frustum);
+        }
+        property bool FrustumCulling
+        {
+            bool get();
+            void set(bool);
+        }
+        property Flood::Vector3 LookAtVector1
+        {
+            Flood::Vector3 get();
+            void set(Flood::Vector3);
+        }
+        property Flood::Matrix4x3 ViewMatrix1
+        {
+            Flood::Matrix4x3 get();
+            void set(Flood::Matrix4x3);
+        }
+        property Flood::Transform^ Transform
+        {
+            Flood::Transform^ get();
+            void set(Flood::Transform^);
+        }
+        property Flood::RenderView^ ActiveView
+        {
+            Flood::RenderView^ get();
+            void set(Flood::RenderView^);
+        }
+        void Render(Flood::Scene^ scene);
+
         void Render(Flood::RenderBlock^ block, bool clearView);
-
-        void Cull(Flood::RenderBlock^ queue, Flood::Entity^ entity);
-
-        Flood::Ray GetRay(float x, float y, Flood::Vector3 outFar);
 
         Flood::Frustum GetVolume(float screenLeft, float screenRight, float screenTop, float screenBottom);
 
         virtual void Update(float delta) override;
 
         void UpdateFrustum();
+
+        void UpdateViewTransform();
+
+        void OnTransformed();
+
+        virtual void OnDebugDraw(Flood::DebugDrawer^ _0, Flood::DebugDrawFlags _1) override;
 
         virtual bool Equals(System::Object^ object) override;
 

@@ -15,13 +15,16 @@
 namespace Flood
 {
     ref class Archive;
-    ref class ResourceEvent;
-    ref class ResourceLoader;
-    ref class ResourceManager;
-    ref class Stream;
     value struct FileWatchEvent;
+    ref class ResourceLoader;
+    ref class ResourceEvent;
+    ref class Resource;
+    ref class ResourceManager;
     value struct ResourceLoadOptions;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Event fired whenever an operation on the resource happens. This can be
     /// useful to know when monitoring for changes, for example in editors.
@@ -163,32 +166,39 @@ namespace Flood
 
         void RemoveResource(Flood::Resource^ resource);
 
-        void RemoveResource(System::String^ name);
-
         void RemoveUnusedResources();
 
         void LoadQueuedResources();
 
         void Update();
 
-        Flood::ResourceLoader^ FindLoader(System::String^ extension);
+        bool ValidateResource(System::String^ path);
+
+        Flood::Resource^ PrepareResource(Flood::ResourceLoadOptions options);
+
+        void DecodeResource(Flood::ResourceLoadOptions options);
+
+        void HandleWatchResource(Flood::Archive^ _0, Flood::FileWatchEvent event);
+
+        void SendPendingEvents();
+
+        void DestroyHandles();
+
+        void RegisterLoader(Flood::ResourceLoader^ _0);
 
         virtual bool Equals(System::Object^ object) override;
 
         virtual int GetHashCode() override;
-        generic<typename T> where T : Flood::Resource
-        Flood::ResourceHandle<T> GetResource(System::String^ name);
-        generic<typename T> where T : Flood::Resource
-        Flood::ResourceHandle<T> LoadResource(System::String^ name);
-        generic<typename T> where T : Flood::Resource
-        Flood::ResourceHandle<T> LoadResource(Flood::ResourceLoadOptions options);
-        generic<typename T> where T : Flood::Resource
-        Flood::ResourceHandle<T> CreateResource();
-    };
 
-    public ref class FloodResourceManager
-    {
-    public:
         static Flood::ResourceManager^ GetResourceManager();
+
+        generic<typename T>
+        Handle GetResource(Flood::String^ name);
+        generic<typename T>
+        Handle LoadResource(Flood::String^ name);
+        generic<typename T>
+        Handle LoadResource(Flood::ResourceLoadOptions options);
+        generic<typename T>
+        Handle CreateResource();
     };
 }

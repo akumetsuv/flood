@@ -12,13 +12,16 @@
 
 namespace Flood
 {
-    enum struct DebugDrawFlags : unsigned char;
-    ref class Camera;
-    ref class Component;
-    ref class DebugDrawer;
-    ref class Entity;
     ref class RenderBatch;
+    ref class Camera;
+    ref class DebugDrawer;
+    ref class Component;
+    enum struct DebugDrawFlags : unsigned char;
+    enum struct DebugDrawFlags : unsigned char;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Represents a component, a specific piece of functionality that can be added
     /// to each entity in the scene. A component will tipically hold a piece of
@@ -40,11 +43,6 @@ namespace Flood
         Component(System::IntPtr native);
         Component();
 
-        property Flood::Entity^ Entity
-        {
-            Flood::Entity^ get();
-            void set(Flood::Entity^);
-        }
         property bool DebugRenderableVisible
         {
             void set(bool);
@@ -54,13 +52,31 @@ namespace Flood
             bool get();
             void set(bool);
         }
+        property bool DebugVisible
+        {
+            bool get();
+            void set(bool);
+        }
+        property Flood::RenderBatch^ DebugRenderable
+        {
+            Flood::RenderBatch^ get();
+            void set(Flood::RenderBatch^);
+        }
         virtual void Update(float delta);
 
         virtual void OnPreRender(Flood::Camera^ camera);
 
         virtual bool IsDebugRenderableVisible();
 
+        virtual void OnPreRender1(Flood::Camera^ camera);
+
+        virtual bool IsDebugRenderableVisible1();
+
         virtual void OnDebugDraw(Flood::DebugDrawer^ _0, Flood::DebugDrawFlags _1);
+
+        virtual void OnPreRender2(Flood::Camera^ camera);
+
+        virtual bool IsDebugRenderableVisible2();
 
         virtual bool Equals(System::Object^ object) override;
 

@@ -12,16 +12,18 @@
 
 namespace Flood
 {
-    ref class Engine;
-    ref class InputManager;
-    ref class Log;
-    ref class PlatformManager;
-    ref class RenderDevice;
-    ref class ResourceManager;
-    ref class Stream;
     ref class Subsystem;
+    ref class ResourceManager;
+    ref class RenderDevice;
+    ref class InputManager;
     ref class WindowManager;
+    ref class PlatformManager;
+    ref class Engine;
+    ref class Log;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Main engine class. This is a utility class that instantiates all the other
     /// engine classes and provides suitable methods to get/set them. It is also
@@ -71,6 +73,11 @@ namespace Flood
         {
             Flood::Log^ get();
         }
+        property Flood::Log^ Log
+        {
+            Flood::Log^ get();
+            void set(Flood::Log^);
+        }
         void Init();
 
         void Update();
@@ -83,11 +90,7 @@ namespace Flood
 
         virtual int GetHashCode() override;
 
-    };
-
-    public ref class FloodEngine
-    {
-    public:
         static Flood::Engine^ GetEngine();
+
     };
 }

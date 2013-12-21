@@ -16,9 +16,14 @@
 namespace Flood
 {
     ref class TrueTypeFont;
+    ref class Font;
     value struct Glyph;
+    ref class Image;
     value struct Vector2;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Represents a TrueType font resource. Loads a TTF font using the
     /// cross-platform FreeType library. Parses all the font glyphs of a size, and
@@ -32,11 +37,6 @@ namespace Flood
         TrueTypeFont(System::IntPtr native);
         TrueTypeFont();
 
-        property System::Collections::Generic::List<unsigned char>^ Data
-        {
-            System::Collections::Generic::List<unsigned char>^ get();
-            void set(System::Collections::Generic::List<unsigned char>^);
-        }
         void Init();
 
         virtual bool GetGlyphInfo(int codepoint, int size, [System::Runtime::InteropServices::Out] Flood::Glyph% glyph) override;

@@ -26,6 +26,11 @@ void Flood::Subsystem::Update()
     ((::Subsystem*)NativePtr)->update();
 }
 
+Flood::Subsystem::Subsystem()
+{
+    NativePtr = new ::Subsystem();
+}
+
 bool Flood::Subsystem::Equals(System::Object^ object)
 {
     if (!object) return false;

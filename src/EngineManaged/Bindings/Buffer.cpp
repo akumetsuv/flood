@@ -6,7 +6,6 @@
 ************************************************************************/
 
 #include "Buffer.h"
-#include "GeometryBuffer.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -84,20 +83,6 @@ void Flood::Buffer::BufferAccess::set(Flood::BufferAccess value)
     ((::Buffer*)NativePtr)->setBufferAccess(arg0);
 }
 
-Flood::GeometryBuffer^ Flood::Buffer::GeometryBuffer::get()
-{
-    auto __ret = ((::Buffer*)NativePtr)->getGeometryBuffer();
-    if (__ret == nullptr) return nullptr;
-    return gcnew Flood::GeometryBuffer((::GeometryBuffer*)__ret);
-}
-
-void Flood::Buffer::GeometryBuffer::set(Flood::GeometryBuffer^ value)
-{
-    auto v = value;
-    auto arg0 = (::GeometryBuffer*)v->NativePtr;
-    ((::Buffer*)NativePtr)->setGeometryBuffer(arg0);
-}
-
 unsigned int Flood::Buffer::Id::get()
 {
     return ((::Buffer*)NativePtr)->id;
@@ -126,15 +111,5 @@ Flood::BufferAccess Flood::Buffer::Access::get()
 void Flood::Buffer::Access::set(Flood::BufferAccess value)
 {
     ((::Buffer*)NativePtr)->access = (::BufferAccess)value;
-}
-
-Flood::GeometryBuffer^ Flood::Buffer::Gb::get()
-{
-    return gcnew Flood::GeometryBuffer((::GeometryBuffer*)((::Buffer*)NativePtr)->gb);
-}
-
-void Flood::Buffer::Gb::set(Flood::GeometryBuffer^ value)
-{
-    ((::Buffer*)NativePtr)->gb = (::GeometryBuffer*)value->NativePtr;
 }
 

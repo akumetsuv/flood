@@ -7,6 +7,7 @@
 
 #include "VertexBuffer.h"
 #include "Buffer.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -174,35 +175,6 @@ unsigned char Flood::VertexDeclaration::VertexSize::get()
 {
     auto __ret = ((::VertexDeclaration*)NativePtr)->getVertexSize();
     return __ret;
-}
-
-System::Collections::Generic::List<Flood::VertexElement>^ Flood::VertexDeclaration::Decls::get()
-{
-    auto _tmpDecls = gcnew System::Collections::Generic::List<Flood::VertexElement>();
-    for(auto _element : ((::VertexDeclaration*)NativePtr)->decls)
-    {
-        auto _marshalElement = Flood::VertexElement((::VertexElement*)&_element);
-        _tmpDecls->Add(_marshalElement);
-    }
-    return _tmpDecls;
-}
-
-void Flood::VertexDeclaration::Decls::set(System::Collections::Generic::List<Flood::VertexElement>^ value)
-{
-    auto _tmpvalue = std::vector<::VertexElement>();
-    for each(Flood::VertexElement _element in value)
-    {
-        auto _marshal0 = ::VertexElement();
-        _marshal0.attribute = (::VertexAttribute)_element.Attribute;
-        _marshal0.type = (::VertexDataType)_element.Type;
-        _marshal0.components = (::uint8)(::uint8_t)_element.Components;
-        _marshal0.stride = (::int8)(::int8_t)_element.Stride;
-        _marshal0.offset = (::uint32)(::uint32_t)_element.Offset;
-        _marshal0.size = (::uint32)(::uint32_t)_element.Size;
-        auto _marshalElement = _marshal0;
-        _tmpvalue.push_back(_marshalElement);
-    }
-    ((::VertexDeclaration*)NativePtr)->decls = _tmpvalue;
 }
 
 Flood::VertexBuffer::VertexBuffer(::VertexBuffer* native)

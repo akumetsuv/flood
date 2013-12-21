@@ -12,19 +12,22 @@
 
 namespace Flood
 {
-    ref class Image;
-    ref class IndexBuffer;
-    ref class RenderBackend;
-    ref class RenderBatch;
-    ref class RenderBuffer;
-    ref class RenderView;
-    ref class Texture;
-    ref class TextureUnit;
     ref class VertexBuffer;
-    value struct Color;
+    ref class IndexBuffer;
+    ref class RenderBuffer;
+    ref class Texture;
+    ref class Image;
+    ref class RenderBatch;
     value struct RenderState;
+    ref class RenderView;
+    ref class RenderBackend;
+    value struct Color;
     value struct Settings;
+    ref class TextureUnit;
+}
 
+namespace Flood
+{
     public ref class RenderBackend : ICppInstance
     {
     public:

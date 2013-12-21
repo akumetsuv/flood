@@ -8,8 +8,9 @@
 #include "ResourceManager.h"
 #include "Archive.h"
 #include "FileWatcher.h"
+#include "HashMap.h"
+#include "Resource.h"
 #include "ResourceLoader.h"
-#include "Stream.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -102,14 +103,14 @@ Flood::ResourceManager::ResourceManager()
 
 Flood::ResourceHandle<Flood::Resource^> Flood::ResourceManager::GetResource(System::String^ name)
 {
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
+    auto arg0 = StringMarshaller::marshalUTF8String(name);
     auto __ret = ((::ResourceManager*)NativePtr)->getResource(arg0);
     return Flood::ResourceHandle<Flood::Resource^>(__ret.id);
 }
 
 Flood::ResourceHandle<Flood::Resource^> Flood::ResourceManager::LoadResource(System::String^ name)
 {
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
+    auto arg0 = StringMarshaller::marshalUTF8String(name);
     auto __ret = ((::ResourceManager*)NativePtr)->loadResource(arg0);
     return Flood::ResourceHandle<Flood::Resource^>(__ret.id);
 }
@@ -117,9 +118,6 @@ Flood::ResourceHandle<Flood::Resource^> Flood::ResourceManager::LoadResource(Sys
 Flood::ResourceHandle<Flood::Resource^> Flood::ResourceManager::LoadResource(Flood::ResourceLoadOptions options)
 {
     auto _marshal0 = ::ResourceLoadOptions();
-    _marshal0.name = clix::marshalString<clix::E_UTF8>(options.Name);
-    if (options.Stream != nullptr)
-        _marshal0.stream = (::Stream*)options.Stream->NativePtr;
     if (options.Resource != nullptr)
         _marshal0.resource = (::Resource*)options.Resource->NativePtr;
     _marshal0.group = (::ResourceGroup)options.Group;
@@ -139,9 +137,6 @@ Flood::ResourceHandle<Flood::Resource^> Flood::ResourceManager::LoadResource(Flo
 bool Flood::ResourceManager::FindResource(Flood::ResourceLoadOptions options)
 {
     auto _marshal0 = ::ResourceLoadOptions();
-    _marshal0.name = clix::marshalString<clix::E_UTF8>(options.Name);
-    if (options.Stream != nullptr)
-        _marshal0.stream = (::Stream*)options.Stream->NativePtr;
     if (options.Resource != nullptr)
         _marshal0.resource = (::Resource*)options.Resource->NativePtr;
     _marshal0.group = (::ResourceGroup)options.Group;
@@ -164,12 +159,6 @@ void Flood::ResourceManager::RemoveResource(Flood::Resource^ resource)
     ((::ResourceManager*)NativePtr)->removeResource(arg0);
 }
 
-void Flood::ResourceManager::RemoveResource(System::String^ name)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
-    ((::ResourceManager*)NativePtr)->removeResource(arg0);
-}
-
 void Flood::ResourceManager::RemoveUnusedResources()
 {
     ((::ResourceManager*)NativePtr)->removeUnusedResources();
@@ -185,12 +174,76 @@ void Flood::ResourceManager::Update()
     ((::ResourceManager*)NativePtr)->update();
 }
 
-Flood::ResourceLoader^ Flood::ResourceManager::FindLoader(System::String^ extension)
+bool Flood::ResourceManager::ValidateResource(System::String^ path)
 {
-    auto arg0 = clix::marshalString<clix::E_UTF8>(extension);
-    auto __ret = ((::ResourceManager*)NativePtr)->findLoader(arg0);
+    auto arg0 = StringMarshaller::marshalUTF8String(path);
+    auto __ret = ((::ResourceManager*)NativePtr)->validateResource(arg0);
+    return __ret;
+}
+
+Flood::Resource^ Flood::ResourceManager::PrepareResource(Flood::ResourceLoadOptions options)
+{
+    auto _marshal0 = ::ResourceLoadOptions();
+    if (options.Resource != nullptr)
+        _marshal0.resource = (::Resource*)options.Resource->NativePtr;
+    _marshal0.group = (::ResourceGroup)options.Group;
+    _marshal0.isHighPriority = options.IsHighPriority;
+    _marshal0.sendLoadEvent = options.SendLoadEvent;
+    _marshal0.asynchronousLoad = options.AsynchronousLoad;
+    _marshal0.keepStreamOpen = options.KeepStreamOpen;
+    auto _marshal1 = ::ResourceLoadOption();
+    _marshal1.key = options.Option.Key;
+    _marshal1.value = options.Option.Value;
+    _marshal0.option = _marshal1;
+    auto arg0 = _marshal0;
+    auto __ret = ((::ResourceManager*)NativePtr)->prepareResource(arg0);
     if (__ret == nullptr) return nullptr;
-    return gcnew Flood::ResourceLoader((::ResourceLoader*)__ret);
+    return gcnew Flood::Resource((::Resource*)__ret);
+}
+
+void Flood::ResourceManager::DecodeResource(Flood::ResourceLoadOptions options)
+{
+    auto _marshal0 = ::ResourceLoadOptions();
+    if (options.Resource != nullptr)
+        _marshal0.resource = (::Resource*)options.Resource->NativePtr;
+    _marshal0.group = (::ResourceGroup)options.Group;
+    _marshal0.isHighPriority = options.IsHighPriority;
+    _marshal0.sendLoadEvent = options.SendLoadEvent;
+    _marshal0.asynchronousLoad = options.AsynchronousLoad;
+    _marshal0.keepStreamOpen = options.KeepStreamOpen;
+    auto _marshal1 = ::ResourceLoadOption();
+    _marshal1.key = options.Option.Key;
+    _marshal1.value = options.Option.Value;
+    _marshal0.option = _marshal1;
+    auto arg0 = _marshal0;
+    ((::ResourceManager*)NativePtr)->decodeResource(arg0);
+}
+
+void Flood::ResourceManager::HandleWatchResource(Flood::Archive^ _0, Flood::FileWatchEvent event)
+{
+    auto arg0 = (::Archive*)_0->NativePtr;
+    auto _marshal1 = ::FileWatchEvent();
+    _marshal1.action = (::FileWatchEventKind)event.Action;
+    _marshal1.watchId = (::FileWatchId)(::uint32)(::uint32_t)event.WatchId;
+    _marshal1.userdata = (void*)event.Userdata.ToPointer();
+    auto arg1 = _marshal1;
+    ((::ResourceManager*)NativePtr)->handleWatchResource(arg0, arg1);
+}
+
+void Flood::ResourceManager::SendPendingEvents()
+{
+    ((::ResourceManager*)NativePtr)->sendPendingEvents();
+}
+
+void Flood::ResourceManager::DestroyHandles()
+{
+    ((::ResourceManager*)NativePtr)->destroyHandles();
+}
+
+void Flood::ResourceManager::RegisterLoader(Flood::ResourceLoader^ _0)
+{
+    auto arg0 = (::ResourceLoader*)_0->NativePtr;
+    ((::ResourceManager*)NativePtr)->registerLoader(arg0);
 }
 
 bool Flood::ResourceManager::Equals(System::Object^ object)
@@ -205,6 +258,13 @@ bool Flood::ResourceManager::Equals(System::Object^ object)
 int Flood::ResourceManager::GetHashCode()
 {
     return (int)NativePtr;
+}
+
+Flood::ResourceManager^ Flood::ResourceManager::GetResourceManager()
+{
+    auto __ret = ::GetResourceManager();
+    if (__ret == nullptr) return nullptr;
+    return gcnew Flood::ResourceManager((::ResourceManager*)__ret);
 }
 
 System::IntPtr Flood::ResourceManager::Instance::get()
@@ -374,28 +434,27 @@ void Flood::ResourceManager::_ResourceLoaderRegisteredRaise(const ::ResourceLoad
 }
 
 generic<typename T>
-Flood::ResourceHandle<T> Flood::ResourceManager::GetResource(System::String^ name)
+Handle Flood::ResourceManager::GetResource(Flood::String^ name)
 {
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
-    auto __ret = ((::ResourceManager*)NativePtr)->getResource<::Resource>(arg0);
-    return Flood::ResourceHandle<T>(__ret.id);
+    auto arg0 = StringMarshaller::marshalString(name);
+    auto __ret = ::ResourceManager::getResource(arg0);
+    auto ____ret = new ::Handle(__ret);
+    return gcnew Flood::Handle((::Handle*)____ret);
 }
 
 generic<typename T>
-Flood::ResourceHandle<T> Flood::ResourceManager::LoadResource(System::String^ name)
+Handle Flood::ResourceManager::LoadResource(Flood::String^ name)
 {
-    auto arg0 = clix::marshalString<clix::E_UTF8>(name);
-    auto __ret = ((::ResourceManager*)NativePtr)->loadResource<::Resource>(arg0);
-    return Flood::ResourceHandle<T>(__ret.id);
+    auto arg0 = StringMarshaller::marshalString(name);
+    auto __ret = ::ResourceManager::loadResource(arg0);
+    auto ____ret = new ::Handle(__ret);
+    return gcnew Flood::Handle((::Handle*)____ret);
 }
 
 generic<typename T>
-Flood::ResourceHandle<T> Flood::ResourceManager::LoadResource(Flood::ResourceLoadOptions options)
+Handle Flood::ResourceManager::LoadResource(Flood::ResourceLoadOptions options)
 {
     auto _marshal0 = ::ResourceLoadOptions();
-    _marshal0.name = clix::marshalString<clix::E_UTF8>(options.Name);
-    if (options.Stream != nullptr)
-        _marshal0.stream = (::Stream*)options.Stream->NativePtr;
     if (options.Resource != nullptr)
         _marshal0.resource = (::Resource*)options.Resource->NativePtr;
     _marshal0.group = (::ResourceGroup)options.Group;
@@ -408,21 +467,16 @@ Flood::ResourceHandle<T> Flood::ResourceManager::LoadResource(Flood::ResourceLoa
     _marshal1.value = options.Option.Value;
     _marshal0.option = _marshal1;
     auto arg0 = _marshal0;
-    auto __ret = ((::ResourceManager*)NativePtr)->loadResource<::Resource>(arg0);
-    return Flood::ResourceHandle<T>(__ret.id);
+    auto __ret = ::ResourceManager::loadResource(arg0);
+    auto ____ret = new ::Handle(__ret);
+    return gcnew Flood::Handle((::Handle*)____ret);
 }
 
 generic<typename T>
-Flood::ResourceHandle<T> Flood::ResourceManager::CreateResource()
+Handle Flood::ResourceManager::CreateResource()
 {
-    // Not binded
-    return Flood::ResourceHandle<T>(0);
-}
-
-Flood::ResourceManager^ Flood::FloodResourceManager::GetResourceManager()
-{
-    auto __ret = ::GetResourceManager();
-    if (__ret == nullptr) return nullptr;
-    return gcnew Flood::ResourceManager((::ResourceManager*)__ret);
+    auto __ret = ::ResourceManager::createResource();
+    auto ____ret = new ::Handle(__ret);
+    return gcnew Flood::Handle((::Handle*)____ret);
 }
 

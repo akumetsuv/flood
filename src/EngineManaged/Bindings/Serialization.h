@@ -12,12 +12,13 @@
 
 namespace Flood
 {
+    ref class ReflectionHandleContext;
     enum struct ReflectionWalkType : unsigned char;
     enum struct SerializerType;
-    ref class Allocator;
-    ref class ReflectionHandleContext;
-    ref class Stream;
+}
 
+namespace Flood
+{
     public enum struct ReflectionWalkType : unsigned char
     {
         Begin = 0,

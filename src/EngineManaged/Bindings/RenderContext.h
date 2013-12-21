@@ -12,15 +12,18 @@
 
 namespace Flood
 {
-    ref class RenderBackend;
-    ref class RenderBuffer;
-    ref class RenderContext;
     ref class RenderDevice;
     ref class RenderTarget;
+    ref class RenderBackend;
     value struct Color;
-    value struct RenderContextSettings;
+    ref class RenderBuffer;
     value struct Settings;
+    value struct RenderContextSettings;
+    ref class RenderContext;
+}
 
+namespace Flood
+{
     public value struct RenderContextSettings
     {
     public:

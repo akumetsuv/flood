@@ -12,13 +12,13 @@
 
 namespace Flood
 {
+    ref class InputEvent;
     enum struct InputDeviceType;
     ref class InputDevice;
-    ref class InputEvent;
+}
 
-    /// <summary>
-    /// Different types of input devices.
-    /// </summary>
+namespace Flood
+{
     public enum struct InputDeviceType
     {
         Keyboard = 0,

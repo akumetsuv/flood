@@ -68,7 +68,7 @@ Flood::Matrix4x4::Matrix4x4(Flood::Matrix4x3 _0)
     _marshal0.tx = _0.Tx;
     _marshal0.ty = _0.Ty;
     _marshal0.tz = _0.Tz;
-    ::Matrix4x4 _native(_marshal0);
+    ::Matrix4x4 _native(&_marshal0);
     this->M11 = _native.m11;
     this->M12 = _native.m12;
     this->M13 = _native.m13;

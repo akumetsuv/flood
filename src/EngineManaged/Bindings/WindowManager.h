@@ -12,15 +12,15 @@
 
 namespace Flood
 {
-    enum struct DirectoryDialogFlags;
-    enum struct FileDialogFlags;
     ref class Window;
     ref class WindowManager;
     value struct WindowSettings;
+    enum struct FileDialogFlags;
+    enum struct DirectoryDialogFlags;
+}
 
-    /// <summary>
-    /// Specifies flags for opening file dialogs.
-    /// </summary>
+namespace Flood
+{
     [System::Flags]
     public enum struct FileDialogFlags
     {
@@ -29,10 +29,6 @@ namespace Flood
         AllowMultipleFiles = 8
     };
 
-    /// <summary>
-    /// Specifies flags for opening directory dialogs.
-    /// </summary>
-    [System::Flags]
     public enum struct DirectoryDialogFlags
     {
         MustExist = 2
@@ -61,16 +57,6 @@ namespace Flood
         /// Creates a new window.
         /// </summary>
         virtual Flood::Window^ CreateWindow(Flood::WindowSettings settings);
-
-        /// <summary>
-        /// Opens a file selection dialog.
-        /// </summary>
-        virtual Flood::Window^ OpenFileDialog(System::String^ wildcard, Flood::FileDialogFlags flags);
-
-        /// <summary>
-        /// Opens a directory selection dialog.
-        /// </summary>
-        virtual Flood::Window^ OpenDirectoryDialog(System::String^ wildcard, Flood::DirectoryDialogFlags flags);
 
         virtual bool Equals(System::Object^ object) override;
 

@@ -14,8 +14,6 @@ Flood::FileWatchEvent::FileWatchEvent(::FileWatchEvent* native)
 {
     Action = (Flood::FileWatchEventKind)native->action;
     WatchId = native->watchId;
-    Dir = clix::marshalString<clix::E_UTF8>(native->dir);
-    Filename = clix::marshalString<clix::E_UTF8>(native->filename);
     Userdata = IntPtr(native->userdata);
 }
 
@@ -24,19 +22,7 @@ Flood::FileWatchEvent::FileWatchEvent(System::IntPtr native)
     auto __native = (::FileWatchEvent*)native.ToPointer();
     Action = (Flood::FileWatchEventKind)__native->action;
     WatchId = __native->watchId;
-    Dir = clix::marshalString<clix::E_UTF8>(__native->dir);
-    Filename = clix::marshalString<clix::E_UTF8>(__native->filename);
     Userdata = IntPtr(__native->userdata);
-}
-
-Flood::FileWatchEvent::FileWatchEvent(Flood::FileWatchEventKind _0, unsigned int _1, System::String^ dir, System::String^ file)
-{
-    ::FileWatchEvent _native((::FileWatchEventKind)_0, (::FileWatchId)(::uint32)(::uint32_t)_1, clix::marshalString<clix::E_UTF8>(dir), clix::marshalString<clix::E_UTF8>(file));
-    this->Action = (Flood::FileWatchEventKind)_native.action;
-    this->WatchId = _native.watchId;
-    this->Dir = clix::marshalString<clix::E_UTF8>(_native.dir);
-    this->Filename = clix::marshalString<clix::E_UTF8>(_native.filename);
-    this->Userdata = IntPtr(_native.userdata);
 }
 
 Flood::FileWatcher::FileWatcher(::FileWatcher* native)
@@ -52,20 +38,6 @@ Flood::FileWatcher::FileWatcher(System::IntPtr native)
 
 Flood::FileWatcher::FileWatcher()
 {
-}
-
-unsigned int Flood::FileWatcher::AddWatch(System::String^ directory, System::IntPtr userdata)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(directory);
-    auto arg1 = (void*)userdata.ToPointer();
-    auto __ret = ((::FileWatcher*)NativePtr)->addWatch(arg0, arg1);
-    return __ret;
-}
-
-void Flood::FileWatcher::RemoveWatch(System::String^ directory)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(directory);
-    ((::FileWatcher*)NativePtr)->removeWatch(arg0);
 }
 
 void Flood::FileWatcher::RemoveWatch(unsigned int FileWatchId)

@@ -54,10 +54,12 @@ private:
     MaxRectsBinPack rectanglePacker;
 
     struct CompareHandle {
-		    bool operator()(const ImageHandle& h1,const ImageHandle& h2) const { return h1.id < h2.id; }
+        bool operator()(const ImageHandle& h1,const ImageHandle& h2) const { return h1.id < h2.id; }
     };
 
-    std::map<ImageHandle, SubTexture, CompareHandle> imageSubTextures;
+    //TODO: CHeck if map needs to be sorted
+    //std::map<ImageHandle, SubTexture, CompareHandle> imageSubTextures;
+    HashMap<ImageHandle, SubTexture> imageSubTextures;
     ImageHandle atlasImageHandle;
 };
 

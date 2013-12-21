@@ -7,7 +7,6 @@
 
 #include "BoundingBox.h"
 #include "Matrix4x3.h"
-#include "Ray.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -35,7 +34,7 @@ Flood::BoundingBox::BoundingBox(Flood::Vector3 min, Flood::Vector3 max)
     _marshal1.x = max.X;
     _marshal1.y = max.Y;
     _marshal1.z = max.Z;
-    ::BoundingBox _native(_marshal0, _marshal1);
+    ::BoundingBox _native(&_marshal0, &_marshal1);
     this->Min = Flood::Vector3((::Vector3*)&_native.min);
     this->Max = Flood::Vector3((::Vector3*)&_native.max);
 }
@@ -165,39 +164,6 @@ Flood::Vector3 Flood::BoundingBox::GetCorner(int index)
     Min = Flood::Vector3((::Vector3*)&_this0.min);
     Max = Flood::Vector3((::Vector3*)&_this0.max);
     return Flood::Vector3((::Vector3*)&__ret);
-}
-
-bool Flood::BoundingBox::Intersects(Flood::Ray ray, [System::Runtime::InteropServices::Out] float% distance)
-{
-    auto _this0 = ::BoundingBox();
-    auto _this0_marshal0 = ::Vector3();
-    _this0_marshal0.x = (*this).Min.X;
-    _this0_marshal0.y = (*this).Min.Y;
-    _this0_marshal0.z = (*this).Min.Z;
-    _this0.min = _this0_marshal0;
-    auto _this0_marshal1 = ::Vector3();
-    _this0_marshal1.x = (*this).Max.X;
-    _this0_marshal1.y = (*this).Max.Y;
-    _this0_marshal1.z = (*this).Max.Z;
-    _this0.max = _this0_marshal1;
-    auto _marshal0 = ::Ray();
-    auto _marshal1 = ::Vector3();
-    _marshal1.x = ray.Origin.X;
-    _marshal1.y = ray.Origin.Y;
-    _marshal1.z = ray.Origin.Z;
-    _marshal0.origin = _marshal1;
-    auto _marshal2 = ::Vector3();
-    _marshal2.x = ray.Direction.X;
-    _marshal2.y = ray.Direction.Y;
-    _marshal2.z = ray.Direction.Z;
-    _marshal0.direction = _marshal2;
-    auto arg0 = _marshal0;
-    float arg1;
-    auto __ret = _this0.intersects(arg0, arg1);
-    distance = arg1;
-    Min = Flood::Vector3((::Vector3*)&_this0.min);
-    Max = Flood::Vector3((::Vector3*)&_this0.max);
-    return __ret;
 }
 
 Flood::BoundingBox Flood::BoundingBox::Transform(Flood::Matrix4x3 _0)

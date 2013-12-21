@@ -13,14 +13,14 @@
 
 namespace Flood
 {
+    ref class KeyEvent;
+    ref class InputEvent;
     enum struct KeyboardEventType;
     enum struct Keys;
-    ref class KeyEvent;
+}
 
-    /// <summary>
-    /// Represents all the available keyboard keys with a unique key code. When
-    /// interacting with the Keyboard class you should always use these values.
-    /// </summary>
+namespace Flood
+{
     public enum struct Keys
     {
         A = 65,
@@ -127,9 +127,6 @@ namespace Flood
         MAX = 321
     };
 
-    /// <summary>
-    /// Different types of keyboard events.
-    /// </summary>
     public enum struct KeyboardEventType
     {
         KeyPressed = 0,

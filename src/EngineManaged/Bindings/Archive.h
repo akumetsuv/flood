@@ -12,14 +12,15 @@
 
 namespace Flood
 {
-    ref class Allocator;
     ref class Archive;
-    ref class ArchiveDirectory;
-    ref class ArchiveVirtual;
-    ref class ArchiveZip;
-    ref class Stream;
     value struct FileWatchEvent;
+    ref class ArchiveVirtual;
+    ref class ArchiveDirectory;
+    ref class ArchiveZip;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Archives are a structured collection of files. The most common archive
     /// implementations are ZIP archive files and OS filesystem directories.
@@ -74,11 +75,6 @@ namespace Flood
         virtual bool Close();
 
         /// <summary>
-        /// Opens a file from the archive.
-        /// </summary>
-        virtual Flood::Stream^ OpenFile(System::String^ path, Flood::Allocator^ alloc);
-
-        /// <summary>
         /// Checks if a file exists.
         /// </summary>
         virtual bool ExistsFile(System::String^ path);
@@ -87,16 +83,6 @@ namespace Flood
         /// Checks if a directory exists.
         /// </summary>
         virtual bool ExistsDir(System::String^ path);
-
-        /// <summary>
-        /// Enumerates all the files in the archive.
-        /// </summary>
-        virtual void EnumerateFiles(System::Collections::Generic::List<System::String^>^ paths);
-
-        /// <summary>
-        /// Enumerates all the directories in the archive.
-        /// </summary>
-        virtual void EnumerateDirs(System::Collections::Generic::List<System::String^>^ paths);
 
         /// <summary>
         /// Sets up and updates the watching functionality for the archive.
@@ -122,11 +108,6 @@ namespace Flood
         ArchiveVirtual(System::IntPtr native);
         ArchiveVirtual();
 
-        property System::Collections::Generic::List<Flood::Archive^>^ Mounts
-        {
-            System::Collections::Generic::List<Flood::Archive^>^ get();
-            void set(System::Collections::Generic::List<Flood::Archive^>^);
-        }
         /// <summary>
         /// Opens the archive.
         /// </summary>
@@ -136,11 +117,6 @@ namespace Flood
         /// Closes the archive.
         /// </summary>
         virtual bool Close() override;
-
-        /// <summary>
-        /// Opens a file from the archive.
-        /// </summary>
-        virtual Flood::Stream^ OpenFile(System::String^ path, Flood::Allocator^ alloc) override;
 
         /// <summary>
         /// Checks if a file exists.
@@ -153,16 +129,6 @@ namespace Flood
         virtual bool ExistsDir(System::String^ path) override;
 
         /// <summary>
-        /// Enumerates all the files in the archive.
-        /// </summary>
-        virtual void EnumerateFiles(System::Collections::Generic::List<System::String^>^ paths) override;
-
-        /// <summary>
-        /// Enumerates all the directories in the archive.
-        /// </summary>
-        virtual void EnumerateDirs(System::Collections::Generic::List<System::String^>^ paths) override;
-
-        /// <summary>
         /// Sets up and updates the watching functionality for the archive.
         /// </summary>
         virtual bool Monitor() override;
@@ -171,11 +137,6 @@ namespace Flood
         /// Mounts an archive in the virtual archive.
         /// </summary>
         bool Mount(Flood::Archive^ mount, System::String^ mountPath);
-
-        /// <summary>
-        /// Mounts a directory and its direct hierarchy.
-        /// </summary>
-        void MountDirectories(System::String^ dirPath, Flood::Allocator^ alloc);
 
         virtual bool Equals(System::Object^ object) override;
 
@@ -205,11 +166,6 @@ namespace Flood
         virtual bool Close() override;
 
         /// <summary>
-        /// Opens a file from the archive.
-        /// </summary>
-        virtual Flood::Stream^ OpenFile(System::String^ path, Flood::Allocator^ alloc) override;
-
-        /// <summary>
         /// Checks if a file exists.
         /// </summary>
         virtual bool ExistsFile(System::String^ path) override;
@@ -218,16 +174,6 @@ namespace Flood
         /// Checks if a directory exists.
         /// </summary>
         virtual bool ExistsDir(System::String^ path) override;
-
-        /// <summary>
-        /// Enumerates all the files in the archive.
-        /// </summary>
-        virtual void EnumerateFiles(System::Collections::Generic::List<System::String^>^ paths) override;
-
-        /// <summary>
-        /// Enumerates all the directories in the archive.
-        /// </summary>
-        virtual void EnumerateDirs(System::Collections::Generic::List<System::String^>^ paths) override;
 
         /// <summary>
         /// Sets up and updates the watching functionality for the archive.
@@ -267,11 +213,6 @@ namespace Flood
         virtual bool Close() override;
 
         /// <summary>
-        /// Opens a file from the archive.
-        /// </summary>
-        virtual Flood::Stream^ OpenFile(System::String^ path, Flood::Allocator^ alloc) override;
-
-        /// <summary>
         /// Checks if a file exists.
         /// </summary>
         virtual bool ExistsFile(System::String^ path) override;
@@ -280,16 +221,6 @@ namespace Flood
         /// Checks if a directory exists.
         /// </summary>
         virtual bool ExistsDir(System::String^ path) override;
-
-        /// <summary>
-        /// Enumerates all the files in the archive.
-        /// </summary>
-        virtual void EnumerateFiles(System::Collections::Generic::List<System::String^>^ paths) override;
-
-        /// <summary>
-        /// Enumerates all the directories in the archive.
-        /// </summary>
-        virtual void EnumerateDirs(System::Collections::Generic::List<System::String^>^ paths) override;
 
         /// <summary>
         /// Sets up and updates the watching functionality for the archive.

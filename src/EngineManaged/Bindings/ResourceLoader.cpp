@@ -8,7 +8,7 @@
 #include "ResourceLoader.h"
 #include "Extension.h"
 #include "Resource.h"
-#include "Stream.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -28,8 +28,6 @@ Flood::ResourceLoadOption::ResourceLoadOption(System::IntPtr native)
 
 Flood::ResourceLoadOptions::ResourceLoadOptions(::ResourceLoadOptions* native)
 {
-    Name = clix::marshalString<clix::E_UTF8>(native->name);
-    Stream = gcnew Flood::Stream((::Stream*)native->stream);
     Resource = gcnew Flood::Resource((::Resource*)native->resource);
     Group = (Flood::ResourceGroup)native->group;
     IsHighPriority = native->isHighPriority;
@@ -42,8 +40,6 @@ Flood::ResourceLoadOptions::ResourceLoadOptions(::ResourceLoadOptions* native)
 Flood::ResourceLoadOptions::ResourceLoadOptions(System::IntPtr native)
 {
     auto __native = (::ResourceLoadOptions*)native.ToPointer();
-    Name = clix::marshalString<clix::E_UTF8>(__native->name);
-    Stream = gcnew Flood::Stream((::Stream*)__native->stream);
     Resource = gcnew Flood::Resource((::Resource*)__native->resource);
     Group = (Flood::ResourceGroup)__native->group;
     IsHighPriority = __native->isHighPriority;
@@ -56,9 +52,6 @@ Flood::ResourceLoadOptions::ResourceLoadOptions(System::IntPtr native)
 void Flood::ResourceLoadOptions::AddOption(int key, int value)
 {
     auto _this0 = ::ResourceLoadOptions();
-    _this0.name = clix::marshalString<clix::E_UTF8>((*this).Name);
-    if ((*this).Stream != nullptr)
-        _this0.stream = (::Stream*)(*this).Stream->NativePtr;
     if ((*this).Resource != nullptr)
         _this0.resource = (::Resource*)(*this).Resource->NativePtr;
     _this0.group = (::ResourceGroup)(*this).Group;
@@ -71,8 +64,6 @@ void Flood::ResourceLoadOptions::AddOption(int key, int value)
     _this0_marshal0.value = (*this).Option.Value;
     _this0.option = _this0_marshal0;
     _this0.addOption(key, value);
-    Name = clix::marshalString<clix::E_UTF8>(_this0.name);
-    Stream = gcnew Flood::Stream((::Stream*)_this0.stream);
     Resource = gcnew Flood::Resource((::Resource*)_this0.resource);
     Group = (Flood::ResourceGroup)_this0.group;
     IsHighPriority = _this0.isHighPriority;
@@ -134,16 +125,6 @@ void Flood::ResourceStream::Instance::set(System::IntPtr object)
     NativePtr = (::ResourceStream*)object.ToPointer();
 }
 
-Flood::Stream^ Flood::ResourceStream::Stream::get()
-{
-    return gcnew Flood::Stream((::Stream*)((::ResourceStream*)NativePtr)->stream);
-}
-
-void Flood::ResourceStream::Stream::set(Flood::Stream^ value)
-{
-    ((::ResourceStream*)NativePtr)->stream = (::Stream*)value->NativePtr;
-}
-
 Flood::ResourceLoader^ Flood::ResourceStream::Loader::get()
 {
     return gcnew Flood::ResourceLoader((::ResourceLoader*)((::ResourceStream*)NativePtr)->loader);
@@ -173,9 +154,6 @@ Flood::ResourceLoader::ResourceLoader()
 Flood::Resource^ Flood::ResourceLoader::Prepare(Flood::ResourceLoadOptions _1)
 {
     auto _marshal0 = ::ResourceLoadOptions();
-    _marshal0.name = clix::marshalString<clix::E_UTF8>(_1.Name);
-    if (_1.Stream != nullptr)
-        _marshal0.stream = (::Stream*)_1.Stream->NativePtr;
     if (_1.Resource != nullptr)
         _marshal0.resource = (::Resource*)_1.Resource->NativePtr;
     _marshal0.group = (::ResourceGroup)_1.Group;
@@ -196,9 +174,6 @@ Flood::Resource^ Flood::ResourceLoader::Prepare(Flood::ResourceLoadOptions _1)
 bool Flood::ResourceLoader::Decode(Flood::ResourceLoadOptions _2)
 {
     auto _marshal0 = ::ResourceLoadOptions();
-    _marshal0.name = clix::marshalString<clix::E_UTF8>(_2.Name);
-    if (_2.Stream != nullptr)
-        _marshal0.stream = (::Stream*)_2.Stream->NativePtr;
     if (_2.Resource != nullptr)
         _marshal0.resource = (::Resource*)_2.Resource->NativePtr;
     _marshal0.group = (::ResourceGroup)_2.Group;
@@ -235,49 +210,9 @@ Flood::ExtensionMetadata Flood::ResourceLoader::Metadata::get()
     return Flood::ExtensionMetadata((::ExtensionMetadata*)__ret);
 }
 
-System::String^ Flood::ResourceLoader::Name::get()
-{
-    auto __ret = ((::ResourceLoader*)NativePtr)->getName();
-    return clix::marshalString<clix::E_UTF8>(__ret);
-}
-
 Flood::ResourceGroup Flood::ResourceLoader::ResourceGroup::get()
 {
     auto __ret = ((::ResourceLoader*)NativePtr)->getResourceGroup();
     return (Flood::ResourceGroup)__ret;
-}
-
-System::Collections::Generic::List<System::String^>^ Flood::ResourceLoader::Extensions::get()
-{
-    auto &__ret = ((::ResourceLoader*)NativePtr)->getExtensions();
-    auto _tmp__ret = gcnew System::Collections::Generic::List<System::String^>();
-    for(auto _element : __ret)
-    {
-        auto _marshalElement = clix::marshalString<clix::E_UTF8>(_element);
-        _tmp__ret->Add(_marshalElement);
-    }
-    return _tmp__ret;
-}
-
-System::Collections::Generic::List<System::String^>^ Flood::ResourceLoader::Extensions1::get()
-{
-    auto _tmpExtensions = gcnew System::Collections::Generic::List<System::String^>();
-    for(auto _element : ((::ResourceLoader*)NativePtr)->extensions)
-    {
-        auto _marshalElement = clix::marshalString<clix::E_UTF8>(_element);
-        _tmpExtensions->Add(_marshalElement);
-    }
-    return _tmpExtensions;
-}
-
-void Flood::ResourceLoader::Extensions1::set(System::Collections::Generic::List<System::String^>^ value)
-{
-    auto _tmpvalue = std::vector<::String>();
-    for each(System::String^ _element in value)
-    {
-        auto _marshalElement = clix::marshalString<clix::E_UTF8>(_element);
-        _tmpvalue.push_back(_marshalElement);
-    }
-    ((::ResourceLoader*)NativePtr)->extensions = _tmpvalue;
 }
 

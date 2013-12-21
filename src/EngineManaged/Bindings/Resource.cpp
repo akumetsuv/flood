@@ -28,6 +28,10 @@ bool Flood::Resource::IsLoaded()
     return __ret;
 }
 
+Flood::Resource::Resource()
+{
+}
+
 bool Flood::Resource::Equals(System::Object^ object)
 {
     if (!object) return false;
@@ -62,13 +66,13 @@ void Flood::Resource::Instance::set(System::IntPtr object)
 System::String^ Flood::Resource::Path::get()
 {
     auto &__ret = ((::Resource*)NativePtr)->getPath();
-    return clix::marshalString<clix::E_UTF8>(__ret);
+    return gcnew Flood::UTF8String((::UTF8String*)&__ret);
 }
 
 void Flood::Resource::Path::set(System::String^ value)
 {
     auto v = value;
-    auto arg0 = clix::marshalString<clix::E_UTF8>(v);
+    auto arg0 = StringMarshaller::marshalUTF8String(v);
     ((::Resource*)NativePtr)->setPath(arg0);
 }
 
@@ -93,22 +97,12 @@ Flood::ResourceGroup Flood::Resource::ResourceGroup::get()
 
 System::String^ Flood::Resource::Path1::get()
 {
-    return clix::marshalString<clix::E_UTF8>(((::Resource*)NativePtr)->path);
+    return StringMarshaller::marshalString(((::Resource*)NativePtr)->path);
 }
 
 void Flood::Resource::Path1::set(System::String^ value)
 {
-    ((::Resource*)NativePtr)->path = clix::marshalString<clix::E_UTF8>(value);
-}
-
-Flood::ResourceStatus Flood::Resource::Status1::get()
-{
-    return (Flood::ResourceStatus)((::Resource*)NativePtr)->status;
-}
-
-void Flood::Resource::Status1::set(Flood::ResourceStatus value)
-{
-    ((::Resource*)NativePtr)->status = (::ResourceStatus)value;
+    ((::Resource*)NativePtr)->path = StringMarshaller::marshalUTF8String(value);
 }
 
 Flood::ResourceStream^ Flood::Resource::Stream::get()

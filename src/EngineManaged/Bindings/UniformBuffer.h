@@ -12,14 +12,17 @@
 
 namespace Flood
 {
+    value struct UniformBufferElement;
     enum struct UniformDataType : unsigned char;
     ref class UniformBuffer;
+    value struct Vector3;
     value struct Color;
     value struct Matrix4x3;
     value struct Matrix4x4;
-    value struct UniformBufferElement;
-    value struct Vector3;
+}
 
+namespace Flood
+{
     public enum struct UniformDataType : unsigned char
     {
         Scalar_F = 0,
@@ -80,17 +83,11 @@ namespace Flood
 
         void SetUniform(System::String^ slot, float value);
 
-        void SetUniform(System::String^ slot, System::Collections::Generic::List<Flood::Vector3>^ vec);
-
-        void SetUniform(System::String^ slot, System::Collections::Generic::List<Flood::Color>^ vec);
-
         void SetUniform(System::String^ slot, Flood::Vector3 vec);
 
         void SetUniform(System::String^ slot, Flood::Matrix4x3 _0);
 
         void SetUniform(System::String^ slot, Flood::Matrix4x4 _0);
-
-        void SetUniform(System::String^ slot, System::Collections::Generic::List<Flood::Matrix4x4>^ vec);
 
         virtual bool Equals(System::Object^ object) override;
 

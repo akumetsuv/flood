@@ -13,15 +13,14 @@
 
 namespace Flood
 {
-    enum struct ResourceGroup;
-    enum struct ResourceStatus;
     ref class ResourceStream;
+    ref class Resource;
+    enum struct ResourceStatus;
+    enum struct ResourceGroup;
+}
 
-    /// <summary>
-    /// Resources can be loaded in a background task. In that case the caller will
-    /// still receive a resource but it won't be fully loaded. It will only be
-    /// fully loaded when the resource status changes to loaded.
-    /// </summary>
+namespace Flood
+{
     public enum struct ResourceStatus
     {
         Error = 0,
@@ -30,11 +29,6 @@ namespace Flood
         Loaded = 3
     };
 
-    /// <summary>
-    /// Resource groups identify the kind of data a resource holds. The resource
-    /// manager class uses this information to keep the related resources together,
-    /// and for managing the data.
-    /// </summary>
     public enum struct ResourceGroup
     {
         General = 0,
@@ -71,6 +65,8 @@ namespace Flood
 
         Resource(::Resource* native);
         Resource(System::IntPtr native);
+        Resource();
+
         property System::String^ Path
         {
             System::String^ get();
@@ -89,11 +85,6 @@ namespace Flood
         {
             System::String^ get();
             void set(System::String^);
-        }
-        property Flood::ResourceStatus Status1
-        {
-            Flood::ResourceStatus get();
-            void set(Flood::ResourceStatus);
         }
         property Flood::ResourceStream^ Stream
         {

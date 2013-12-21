@@ -18,83 +18,83 @@ NAMESPACE_CORE_BEGIN
 
 ClassWatch* ClassWatchCreate(Allocator* alloc)
 {
-	ClassWatch* watch = Allocate(alloc, ClassWatch);
-	return watch;
+    ClassWatch* watch = Allocate(alloc, ClassWatch);
+    return watch;
 }
 
 //-----------------------------------//
 
 void ClassWatchReset(ClassWatch* watch)
 {
-	if( !watch ) return;
-	watch->fields.clear();
+    if( !watch ) return;
+    watch->fields.Clear();
 }
 
 //-----------------------------------//
 
 bool ClassWatchUpdateField(ClassWatch* watch, const Field* field)
 {
-	FieldWatch& fw = watch->fields[field];
+    FieldWatch& fw = watch->fields[field];
 
-	byte* min = (byte*) ClassGetFieldAddress(fw.object, field);
-	byte* max = min + field->size;
+    byte* min = (byte*) ClassGetFieldAddress(fw.object, field);
+    byte* max = min + field->size;
 
-	size_t size = max - min;
-	uint32 hash = HashMurmur2(0xF00D, min, size);
+    size_t size = max - min;
+    uint32 hash = HashMurmur2(0xF00D, min, size);
 
-	bool changed = false;
+    bool changed = false;
 
-	if(hash != fw.hash)
-	{
-		fw.hash = hash;
-		changed = true;
-	}
+    if(hash != fw.hash)
+    {
+        fw.hash = hash;
+        changed = true;
+    }
 
-	return changed;
+    return changed;
 }
 
 //-----------------------------------//
 
 void ClassWatchAddField(ClassWatch* watch, const FieldWatch& fw )
 {
-	watch->fields[fw.field] = fw;
-	ClassWatchUpdateField(watch, fw.field);
+    watch->fields[fw.field] = fw;
+    ClassWatchUpdateField(watch, fw.field);
 }
 
 //-----------------------------------//
 
 void ClassWatchAddFields(ClassWatch* watch, Object* object)
 {
-	if( !watch || !object ) return;
+    if( !watch || !object ) return;
 
-	Class* klass = ClassGetType(object);
-	const Vector<Field*>& fields = klass->fields;
+    Class* klass = ClassGetType(object);
+    const Vector<Field*>& fields = klass->fields;
 
-	for(size_t i = 0; i < fields.Size(); i++)
-	{
-		const Field* field = fields[i];
+    for(size_t i = 0; i < fields.Size(); i++)
+    {
+        const Field* field = fields[i];
 
-		FieldWatch fw;
-		fw.object = object;
-		fw.field = field;
+        FieldWatch fw;
+        fw.object = object;
+        fw.field = field;
 
-		ClassWatchAddField(watch, fw);
-	}
+        ClassWatchAddField(watch, fw);
+    }
 }
 
 //-----------------------------------//
 
 void ClassWatchUpdate(ClassWatch* watch, FieldWatchVector& changed)
 {
-	FieldWatchMap& watches = watch->fields;
-	FieldWatchMap::iterator it = watches.begin();
+    FieldWatchMap& watches = watch->fields;
+    auto it = watches.Begin();
 
-	for(; it != watches.end(); ++it)
-	{
-		FieldWatch& fw = it->second;
-		bool updated = ClassWatchUpdateField(watch, fw.field);
-		if( updated ) changed.push_back(&fw);
-	}
+    for(; it != watches.End(); ++it)
+    {
+        FieldWatch& fw = it->second;
+        bool updated = ClassWatchUpdateField(watch, fw.field);
+        if( updated ) changed.Push(&fw);
+    }
 }
 
 //-----------------------------------//

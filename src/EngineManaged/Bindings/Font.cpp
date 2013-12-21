@@ -62,6 +62,11 @@ Flood::Vector2 Flood::Font::GetKerning(int codepoint1, int codepoint2, int fontS
     return Flood::Vector2((::Vector2*)&__ret);
 }
 
+Flood::Font::Font()
+    : Flood::Resource((::Resource*)nullptr)
+{
+}
+
 bool Flood::Font::Equals(System::Object^ object)
 {
     if (!object) return false;
@@ -76,32 +81,9 @@ int Flood::Font::GetHashCode()
     return (int)NativePtr;
 }
 
-System::String^ Flood::Font::Name::get()
-{
-    auto &__ret = ((::Font*)NativePtr)->getName();
-    return clix::marshalString<clix::E_UTF8>(__ret);
-}
-
-void Flood::Font::Name::set(System::String^ value)
-{
-    auto v = value;
-    auto arg0 = clix::marshalString<clix::E_UTF8>(v);
-    ((::Font*)NativePtr)->setName(arg0);
-}
-
 Flood::ResourceGroup Flood::Font::ResourceGroup::get()
 {
     auto __ret = ((::Font*)NativePtr)->getResourceGroup();
     return (Flood::ResourceGroup)__ret;
-}
-
-System::String^ Flood::Font::Name1::get()
-{
-    return clix::marshalString<clix::E_UTF8>(((::Font*)NativePtr)->name);
-}
-
-void Flood::Font::Name1::set(System::String^ value)
-{
-    ((::Font*)NativePtr)->name = clix::marshalString<clix::E_UTF8>(value);
 }
 

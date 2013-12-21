@@ -22,6 +22,11 @@ Flood::ShaderMaterial::ShaderMaterial(System::IntPtr native)
     auto __native = (::ShaderMaterial*)native.ToPointer();
 }
 
+Flood::ShaderMaterial::ShaderMaterial()
+    : Flood::Resource((::Resource*)nullptr)
+{
+}
+
 bool Flood::ShaderMaterial::Equals(System::Object^ object)
 {
     if (!object) return false;

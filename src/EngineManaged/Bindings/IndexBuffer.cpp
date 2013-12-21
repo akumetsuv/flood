@@ -6,7 +6,6 @@
 ************************************************************************/
 
 #include "IndexBuffer.h"
-#include "GeometryBuffer.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;

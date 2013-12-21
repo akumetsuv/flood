@@ -13,18 +13,19 @@
 
 namespace Flood
 {
-    enum struct MouseButton : unsigned char;
-    enum struct MouseEventType : unsigned char;
-    ref class MouseButtonEvent;
-    ref class MouseDragEvent;
-    ref class MouseEvent;
     ref class MouseInfo;
+    ref class MouseEvent;
+    ref class InputEvent;
+    enum struct MouseEventType : unsigned char;
     ref class MouseMoveEvent;
+    ref class MouseDragEvent;
+    ref class MouseButtonEvent;
+    enum struct MouseButton : unsigned char;
     ref class MouseWheelEvent;
+}
 
-    /// <summary>
-    /// Different types of mouse buttons.
-    /// </summary>
+namespace Flood
+{
     public enum struct MouseButton : unsigned char
     {
         Left = 0,
@@ -34,9 +35,6 @@ namespace Flood
         Mouse5 = 4
     };
 
-    /// <summary>
-    /// Different types of mouse events.
-    /// </summary>
     public enum struct MouseEventType : unsigned char
     {
         MouseWheelMove = 0,

@@ -9,7 +9,7 @@
 
 #include "Core/API.h"
 #include "Core/String.h"
-#include <map>
+#include "Core/containers/HashMap.h"
 
 NAMESPACE_CORE_BEGIN
 
@@ -21,10 +21,10 @@ NAMESPACE_CORE_BEGIN
 
 enum struct TypeAttributeKind : uint8
 {
-	String,
-	Integer,
-	KeyValue,
-	Flags
+    String,
+    Integer,
+    KeyValue,
+    Flags
 };
 
 //-----------------------------------//
@@ -36,9 +36,9 @@ enum struct TypeAttributeKind : uint8
 
 enum struct TypeKind : uint8
 {
-	Primitive,
-	Composite,
-	Enumeration,
+    Primitive,
+    Composite,
+    Enumeration,
 };
 
 struct ReflectionContext;
@@ -48,26 +48,26 @@ typedef void (*ReflectionWalkFunction)(ReflectionContext*, ReflectionWalkType);
 
 struct API_CORE Type
 {
-	Type();
-	Type(TypeKind kind, const char* name, uint16 size);
+    Type();
+    Type(TypeKind kind, const char* name, uint16 size);
 
-	// Meta type of the type.
-	TypeKind kind;
+    // Meta type of the type.
+    TypeKind kind;
 
-	// Name of the type.
-	const char* name;
+    // Name of the type.
+    const char* name;
 
-	// Size of the type.
-	uint16 size;
+    // Size of the type.
+    uint16 size;
 
-	// Attributes of the type.
-	//Vector<TypeAttribute> attributes;
+    // Attributes of the type.
+    //Vector<TypeAttribute> attributes;
 
-	// Custom walk function.
-	ReflectionWalkFunction serialize;
+    // Custom walk function.
+    ReflectionWalkFunction serialize;
 };
 
-typedef std::map<const char*, Type*, RawStringCompare> TypeMap;
+typedef HashMap<const char*, Type*> TypeMap;
 
 // Gets if this type represents a primitive type.
 API_CORE bool ReflectionIsPrimitive(const Type*);
@@ -86,7 +86,7 @@ API_CORE bool ReflectionIsEqual(const Type*, const Type*);
 // Keeps a map with the types in the database.
 struct API_CORE ReflectionDatabase
 {
-	TypeMap types;
+    TypeMap types;
 };
 
 // Registers a new type in the reflection database.
@@ -115,8 +115,8 @@ typedef uint8 FieldId;
 
 typedef void* (*ClassCreateFunction)(Allocator*);
 
-typedef std::map<FieldId, Field*> ClassFieldIdMap;
-typedef std::map<ClassId, Class*> ClassIdMap;
+typedef HashMap<FieldId, Field*> ClassFieldIdMap;
+typedef HashMap<ClassId, Class*> ClassIdMap;
 
 /**
  * This class provides types with a fast RTTI (Runtime Type Information)
@@ -126,26 +126,26 @@ typedef std::map<ClassId, Class*> ClassIdMap;
 
 struct API_CORE Class : public Type
 {
-	Class() : parent(nullptr), create_fn(nullptr)
-	{ }
+    Class() : parent(nullptr), create_fn(nullptr)
+    { }
 
-	// Class id.
-	ClassId id;
+    // Class id.
+    ClassId id;
 
-	// Parent of the type.
-	Class* parent;
+    // Parent of the type.
+    Class* parent;
 
-	// Factory function.
-	ClassCreateFunction create_fn;
+    // Factory function.
+    ClassCreateFunction create_fn;
 
-	// Keeps track of the type fields.
-	Vector<Field*> fields;
+    // Keeps track of the type fields.
+    Vector<Field*> fields;
 
-	// Keeps track of the type fields by id.
-	ClassFieldIdMap fieldIds;
+    // Keeps track of the type fields by id.
+    ClassFieldIdMap fieldIds;
 
-	// Keeps track of the childs of the class.
-	Vector<Class*> childs;
+    // Keeps track of the childs of the class.
+    Vector<Class*> childs;
 };
 
 // Returns the parent of the class.
@@ -194,32 +194,32 @@ typedef void* (*FieldResizeFunction)(void* object, size_t size);
 
 enum struct FieldQualifier : uint16
 {
-	Array           = 1 << 0,
-	Map             = 1 << 1,
-	Set             = 1 << 2,
-	Handle          = 1 << 3,
-	RawPointer      = 1 << 4,
-	SharedPointer   = 1 << 5,
-	RefPointer      = 1 << 6,
-	ReadOnly        = 1 << 7,
-	NoSerialize     = 1 << 8
+    Array           = 1 << 0,
+    Map             = 1 << 1,
+    Set             = 1 << 2,
+    Handle          = 1 << 3,
+    RawPointer      = 1 << 4,
+    SharedPointer   = 1 << 5,
+    RefPointer      = 1 << 6,
+    ReadOnly        = 1 << 7,
+    NoSerialize     = 1 << 8
 };
 
 struct API_CORE Field
 {
-	Field();
+    Field();
 
-	Type* type;
-	FieldId id;
-	const char* name;
-	Vector<const char*> aliases;
-	uint16 size;
-	uint16 offset;
-	uint16 pointer_size;
-	FieldQualifier qualifiers;
-	FieldSetterFunction setter;
-	FieldResizeFunction resize;
-	ReflectionWalkFunction serialize;
+    Type* type;
+    FieldId id;
+    const char* name;
+    Vector<const char*> aliases;
+    uint16 size;
+    uint16 offset;
+    uint16 pointer_size;
+    FieldQualifier qualifiers;
+    FieldSetterFunction setter;
+    FieldResizeFunction resize;
+    ReflectionWalkFunction serialize;
 };
 
 static FieldId FieldInvalid = 127;
@@ -246,53 +246,55 @@ API_CORE void FieldSetSetter(Field*, FieldSetterFunction);
 
 enum struct PrimitiveTypeKind : uint8
 {
-	Bool,
-	Int8,
-	Uint8,
-	Int16,
-	Uint16,
-	Int32,
-	Uint32,
-	Int64,
-	Uint64,
-	Float,
-	String,
-	Color,
-	Vector3,
-	Quaternion,
+    Bool,
+    Int8,
+    Uint8,
+    Int16,
+    Uint16,
+    Int32,
+    Uint32,
+    Int64,
+    Uint64,
+    Float,
+    String,
+    UTF8String,
+    Color,
+    Vector3,
+    Quaternion,
 };
 
 struct API_CORE Primitive : public Type
 {
-	Primitive()
-	{}
+    Primitive()
+    {}
 
-	Primitive(PrimitiveTypeKind kind, const char* name, uint16 size)
-		: Type(TypeKind::Primitive, name, size), kind(kind)
-	{}
+    Primitive(PrimitiveTypeKind kind, const char* name, uint16 size)
+        : Type(TypeKind::Primitive, name, size), kind(kind)
+    {}
 
-	PrimitiveTypeKind kind;
+    PrimitiveTypeKind kind;
 };
 
 struct API_CORE PrimitiveBuiltins
 {
-	PrimitiveBuiltins();
+    PrimitiveBuiltins();
 
-	Primitive p_bool;
-	Primitive p_int8;
-	Primitive p_uint8;
-	Primitive p_int16;
-	Primitive p_uint16;
-	Primitive p_int32;
-	Primitive p_uint32;
-	Primitive p_int64;
-	Primitive p_uint64;
-	Primitive p_float;
-	Primitive p_double;
-	Primitive p_string;
-	Primitive p_Vector3;
-	Primitive p_Color;
-	Primitive p_Quaternion;
+    Primitive p_bool;
+    Primitive p_int8;
+    Primitive p_uint8;
+    Primitive p_int16;
+    Primitive p_uint16;
+    Primitive p_int32;
+    Primitive p_uint32;
+    Primitive p_int64;
+    Primitive p_uint64;
+    Primitive p_float;
+    Primitive p_double;
+    Primitive p_string;
+    Primitive p_utf8string;
+    Primitive p_Vector3;
+    Primitive p_Color;
+    Primitive p_Quaternion;
 };
 
 // Gets the primitive builtin types.
@@ -300,13 +302,13 @@ API_CORE PrimitiveBuiltins& PrimitiveGetBuiltins();
 
 //-----------------------------------//
 
-typedef std::map<const char*, int32, RawStringCompare> EnumValuesMap;
+typedef HashMap<const char*, int32> EnumValuesMap;
 typedef std::pair<const char*, int32> EnumValuesPair;
 
 struct API_CORE Enum : public Type
 {
-	EnumValuesMap values;
-	PrimitiveTypeKind backing;
+    EnumValuesMap values;
+    PrimitiveTypeKind backing;
 };
 
 // Adds a new enumeration to this enum.
@@ -324,40 +326,40 @@ API_CORE const char* EnumGetValueName(Enum*, int32 value);
 template<typename T>
 const T& FieldGet( const Field* field, void* object )
 {
-	T* addr = (T*) ClassGetFieldAddress(object, field);
-	return *addr;
+    T* addr = (T*) ClassGetFieldAddress(object, field);
+    return *addr;
 }
 
 // Sets the value of the field in the object.
 template<typename T>
 void FieldSet( const Field* field, void* object, const T& value )
 {
-	T* addr = (T*) ClassGetFieldAddress(object, field);
-	FieldSetterFunction setter = field->setter;
-	
-	if(setter) setter(object, (void*) &value);
-	else *addr = value;
+    T* addr = (T*) ClassGetFieldAddress(object, field);
+    FieldSetterFunction setter = field->setter;
+    
+    if(setter) setter(object, (void*) &value);
+    else *addr = value;
 }
 
 // Recursively finds and creates instances of child classes.
 template<typename T>
 void ClassCreateChilds(const Class* klass, Allocator* alloc, Vector<T*>& instances)
 {
-	for( size_t i = 0; i < klass->childs.size(); i++ )
-	{
-		Class* child = klass->childs[i];
-		if( !child ) continue;
+    for( size_t i = 0; i < klass->childs.size(); i++ )
+    {
+        Class* child = klass->childs[i];
+        if( !child ) continue;
 
-		ClassCreateChilds(child, alloc, instances);
+        ClassCreateChilds(child, alloc, instances);
 
-		if( ClassIsAbstract(child) )
-			continue;
+        if( ClassIsAbstract(child) )
+            continue;
 
-		T* object = (T*) ClassCreateInstance(child, alloc);
-		if(!object) continue;
+        T* object = (T*) ClassCreateInstance(child, alloc);
+        if(!object) continue;
 
-		instances.push_back(object);
-	}
+        instances.Push(object);
+    }
 }
 
 //-----------------------------------//

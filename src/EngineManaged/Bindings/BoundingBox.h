@@ -14,9 +14,12 @@
 namespace Flood
 {
     value struct BoundingBox;
+    value struct Vector3;
     value struct Matrix4x3;
-    value struct Ray;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Axis-aligned Bounding Box.
     /// </summary>
@@ -45,8 +48,6 @@ namespace Flood
         bool IsInfinite();
 
         Flood::Vector3 GetCorner(int index);
-
-        bool Intersects(Flood::Ray ray, [System::Runtime::InteropServices::Out] float% distance);
 
         Flood::BoundingBox Transform(Flood::Matrix4x3 _0);
 

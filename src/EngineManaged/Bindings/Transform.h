@@ -17,11 +17,19 @@
 
 namespace Flood
 {
-    enum struct DebugDrawFlags : unsigned char;
-    ref class Allocator;
-    ref class DebugDrawer;
     ref class Transform;
+    ref class Component;
+    value struct Vector3;
+    value struct Quaternion;
+    value struct Matrix4x3;
+    value struct BoundingBox;
+    ref class DebugDrawer;
+    enum struct DebugDrawFlags : unsigned char;
+    enum struct DebugDrawFlags : unsigned char;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Transform provide entities with position and orientation information. They
     /// can be used to scale, rotate and translate entities in the scene, and keep
@@ -75,6 +83,50 @@ namespace Flood
         {
             Flood::BoundingBox get();
         }
+        property bool Changed
+        {
+            void set(bool);
+        }
+        property Flood::Vector3 Position1
+        {
+            Flood::Vector3 get();
+            void set(Flood::Vector3);
+        }
+        property Flood::Quaternion Rotation1
+        {
+            Flood::Quaternion get();
+            void set(Flood::Quaternion);
+        }
+        property Flood::Vector3 Scale1
+        {
+            Flood::Vector3 get();
+            void set(Flood::Vector3);
+        }
+        property Flood::Matrix4x3 Transform1
+        {
+            Flood::Matrix4x3 get();
+            void set(Flood::Matrix4x3);
+        }
+        property Flood::BoundingBox Bounds
+        {
+            Flood::BoundingBox get();
+            void set(Flood::BoundingBox);
+        }
+        property bool WasChanged
+        {
+            bool get();
+            void set(bool);
+        }
+        property bool NeedsBoundsUpdate
+        {
+            bool get();
+            void set(bool);
+        }
+        property bool ExternalTransform
+        {
+            bool get();
+            void set(bool);
+        }
     private:
         delegate void _TransformedDelegate();
         _TransformedDelegate^ _TransformedDelegateInstance;
@@ -102,8 +154,6 @@ namespace Flood
         virtual bool Equals(System::Object^ object) override;
 
         virtual int GetHashCode() override;
-
-        static Flood::Transform^ Create(Flood::Allocator^ _0);
 
     };
 }

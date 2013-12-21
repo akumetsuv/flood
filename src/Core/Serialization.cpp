@@ -31,71 +31,71 @@ static void WalkNull(ReflectionContext*, ReflectionWalkType)
 }
 
 ReflectionContext::ReflectionContext()
-	: loading(false)
-	, userData(nullptr)
-	, object(nullptr)
-	, objectClass(nullptr)
-	, type(nullptr)
-	, enume(nullptr)
-	, composite(nullptr)
-	, primitive(nullptr)
-	, field(nullptr)
-	, address(nullptr)
-	, elementAddress(nullptr)
-	, handleContextMap(nullptr)
-	, walkComposite(WalkNull)
-	, walkCompositeField(WalkNull)
-	, walkCompositeFields(WalkNull)
-	, walkPrimitive(WalkNull)
-	, walkEnum(WalkNull)
-	, walkArray(WalkNull)
+    : loading(false)
+    , userData(nullptr)
+    , object(nullptr)
+    , objectClass(nullptr)
+    , type(nullptr)
+    , enume(nullptr)
+    , composite(nullptr)
+    , primitive(nullptr)
+    , field(nullptr)
+    , address(nullptr)
+    , elementAddress(nullptr)
+    , handleContextMap(nullptr)
+    , walkComposite(WalkNull)
+    , walkCompositeField(WalkNull)
+    , walkCompositeFields(WalkNull)
+    , walkPrimitive(WalkNull)
+    , walkEnum(WalkNull)
+    , walkArray(WalkNull)
 {
 }
 
 //-----------------------------------//
 
 void ReflectionSetHandleContext( ReflectionHandleContextMap* handleContextMap,
-								    ReflectionHandleContext context)
+                                    ReflectionHandleContext context)
 {
-	assert(handleContextMap && "Expected a valid context map");
-	if (!handleContextMap ) return;
+    assert(handleContextMap && "Expected a valid context map");
+    if (!handleContextMap ) return;
 
-	(*handleContextMap)[context.type] = context;
+    (*handleContextMap)[context.type] = context;
 }
 
 //-----------------------------------//
 
 bool ReflectionFindHandleContext( ReflectionHandleContextMap* handleContextMap,
-								    Class* klass, ReflectionHandleContext& ctx)
+                                    Class* klass, ReflectionHandleContext& ctx)
 {
-	assert(handleContextMap && "Expected a valid context map");
-	if (!handleContextMap ) return false;
+    assert(handleContextMap && "Expected a valid context map");
+    if (!handleContextMap ) return false;
 
-	auto it = handleContextMap->find(klass);
-	
-	if( it != handleContextMap->end() )
-	{
-		ctx = it->second;
-		return true;
-	}
-	else if( ClassHasParent(klass) )
-	{
-		Class* parent = ClassGetParent(klass);
-		return ReflectionFindHandleContext(handleContextMap, parent, ctx);
-	}
+    auto it = handleContextMap->Find(klass);
+    
+    if( it != handleContextMap->End() )
+    {
+        ctx = it->second;
+        return true;
+    }
+    else if( ClassHasParent(klass) )
+    {
+        Class* parent = ClassGetParent(klass);
+        return ReflectionFindHandleContext(handleContextMap, parent, ctx);
+    }
 
-	return false;
+    return false;
 }
 
 //-----------------------------------//
 
 Serializer::Serializer(Allocator* allocator)
-	: allocator(allocator)
-	, stream(nullptr)
-	, object(nullptr)
+    : allocator(allocator)
+    , stream(nullptr)
+    , object(nullptr)
 {
-	serializeContext.loading = false;
-	deserializeContext.loading = true;
+    serializeContext.loading = false;
+    deserializeContext.loading = true;
 }
 
 //-----------------------------------//
@@ -108,73 +108,73 @@ Serializer::~Serializer()
 
 static void ReflectionWalkPrimitive(ReflectionContext* context)
 {
-	if( !context->walkPrimitive ) return;
+    if( !context->walkPrimitive ) return;
 
-	Primitive* type = context->primitive;
-	void* address = context->address;
-	ValueContext& vc = context->valueContext;
-	
-	switch(type->kind)
-	{
-	case PrimitiveTypeKind::Bool:
-		vc.b = *(bool*) address;
-		break;
-	case PrimitiveTypeKind::Int8:
-		vc.i8 = *(int8*) address;
-		break;
-	case PrimitiveTypeKind::Uint8:
-		vc.u8 = *(uint8*) address;
-		break;
-	case PrimitiveTypeKind::Int16:
-		vc.i16 = *(int16*) address;
-		break;
-	case PrimitiveTypeKind::Uint16:
-		vc.u16= *(uint16*) address;
-		break;
-	case PrimitiveTypeKind::Int32:
-		vc.i32 = *(int32*) address;
-		break;
-	case PrimitiveTypeKind::Uint32:
-		vc.u32 = *(uint32*) address;
-		break;
-	case PrimitiveTypeKind::Int64:
-		vc.i64 = *(int64*) address;
-		break;
-	case PrimitiveTypeKind::Uint64:
-		vc.u64 = *(uint64*) address;
-		break;
-	case PrimitiveTypeKind::Float:
-		vc.f32 = *(float*) address;
-		break;
-	case PrimitiveTypeKind::Color:
-		vc.c = *(Color*) address;
-		break;
-	case PrimitiveTypeKind::Vector3:
-		vc.v = *(Vector3*) address;
-		break;
-	case PrimitiveTypeKind::Quaternion:
-		vc.q = *(Quaternion*) address;
-		break;
-	case PrimitiveTypeKind::String:
-		vc.s = (String*) address;
-		break;
-	default:
-		assert( false );
-	}
+    Primitive* type = context->primitive;
+    void* address = context->address;
+    ValueContext& vc = context->valueContext;
+    
+    switch(type->kind)
+    {
+    case PrimitiveTypeKind::Bool:
+        vc.b = *(bool*) address;
+        break;
+    case PrimitiveTypeKind::Int8:
+        vc.i8 = *(int8*) address;
+        break;
+    case PrimitiveTypeKind::Uint8:
+        vc.u8 = *(uint8*) address;
+        break;
+    case PrimitiveTypeKind::Int16:
+        vc.i16 = *(int16*) address;
+        break;
+    case PrimitiveTypeKind::Uint16:
+        vc.u16= *(uint16*) address;
+        break;
+    case PrimitiveTypeKind::Int32:
+        vc.i32 = *(int32*) address;
+        break;
+    case PrimitiveTypeKind::Uint32:
+        vc.u32 = *(uint32*) address;
+        break;
+    case PrimitiveTypeKind::Int64:
+        vc.i64 = *(int64*) address;
+        break;
+    case PrimitiveTypeKind::Uint64:
+        vc.u64 = *(uint64*) address;
+        break;
+    case PrimitiveTypeKind::Float:
+        vc.f32 = *(float*) address;
+        break;
+    case PrimitiveTypeKind::Color:
+        vc.c = *(Color*) address;
+        break;
+    case PrimitiveTypeKind::Vector3:
+        vc.v = *(Vector3*) address;
+        break;
+    case PrimitiveTypeKind::Quaternion:
+        vc.q = *(Quaternion*) address;
+        break;
+    case PrimitiveTypeKind::String:
+        vc.s = (String*) address;
+        break;
+    default:
+        assert( false );
+    }
 
-	context->walkPrimitive(context, ReflectionWalkType::Element);
+    context->walkPrimitive(context, ReflectionWalkType::Element);
 }
 
 //-----------------------------------//
 
 static void ReflectionWalkEnum(ReflectionContext* context)
 {
-	if( !context->walkEnum ) return;
+    if( !context->walkEnum ) return;
 
-	ValueContext& vc = context->valueContext;
-	vc.i32 = *(int32*) ClassGetFieldAddress(context->object, context->field);
+    ValueContext& vc = context->valueContext;
+    vc.i32 = *(int32*) ClassGetFieldAddress(context->object, context->field);
 
-	context->walkEnum(context, ReflectionWalkType::Element);
+    context->walkEnum(context, ReflectionWalkType::Element);
 }
 
 //-----------------------------------//
@@ -186,308 +186,308 @@ static void ReflectionWalkType(ReflectionContext* context, Type* type);
 
 static bool ReflectionWalkPointer(ReflectionContext* context)
 {
-	void* address = context->elementAddress;
-	const Field* field = context->field;
+    void* address = context->elementAddress;
+    const Field* field = context->field;
 
 #ifdef ENABLE_MEMORY_SHARED_PTR
-	if(FieldIsSharedPointer(field))
-	{
-		std::shared_ptr<Object>* shared = (std::shared_ptr<Object>*) address;
-		address = shared->get();
-	}
-	else
+    if(FieldIsSharedPointer(field))
+    {
+        std::shared_ptr<Object>* shared = (std::shared_ptr<Object>*) address;
+        address = shared->get();
+    }
+    else
 #endif
 
-	if(FieldIsRefPointer(field))
-	{
-		RefPtr<Object>* ref = (RefPtr<Object>*) address;
-		address = ref->get();
-	}
-	else if(FieldIsRawPointer(field))
-	{
-		address = context->elementAddress;
-		address = *(Object**) address;
-	}
-	else if(FieldIsHandle(field))
-	{
-		typedef Handle<Object, NullResolve, NullDestroy> ObjectHandle;
-		ObjectHandle* handle = (ObjectHandle*) address;
-		HandleId id = handle->getId();
-		
-		Class* klass = (Class*) field->type;
+    if(FieldIsRefPointer(field))
+    {
+        RefPtr<Object>* ref = (RefPtr<Object>*) address;
+        address = ref->get();
+    }
+    else if(FieldIsRawPointer(field))
+    {
+        address = context->elementAddress;
+        address = *(Object**) address;
+    }
+    else if(FieldIsHandle(field))
+    {
+        typedef Handle<Object, NullResolve, NullDestroy> ObjectHandle;
+        ObjectHandle* handle = (ObjectHandle*) address;
+        HandleId id = handle->getId();
+        
+        Class* klass = (Class*) field->type;
 
-		ReflectionHandleContext hc;
-		if( !ReflectionFindHandleContext(context->handleContextMap, klass, hc) )
-		{
-			LogDebug("No handle context found for class '%s'", klass->name);
-			return false;
-		}
+        ReflectionHandleContext hc;
+        if( !ReflectionFindHandleContext(context->handleContextMap, klass, hc) )
+        {
+            LogDebug("No handle context found for class '%s'", klass->name);
+            return false;
+        }
 
-		address = (Object*) HandleFind(hc.handles, id);
-		if( !address ) return false;
-	}
+        address = (Object*) HandleFind(hc.handles, id);
+        if( !address ) return false;
+    }
 
-	context->elementAddress = address;
-	context->object = (Object*) context->elementAddress;
+    context->elementAddress = address;
+    context->object = (Object*) context->elementAddress;
 
-	return true;
+    return true;
 }
 
 //-----------------------------------//
 
 static void ReflectionWalkArray(ReflectionContext* context)
 {
-	const Field* field = context->field;
-	Vector<byte>& array = *(Vector<byte>*) context->address;
+    const Field* field = context->field;
+    Vector<byte>& array = *(Vector<byte>*) context->address;
 
-	uint16 elementSize = ReflectionArrayGetElementSize(context->field);
-	uint32 arraySize = array.Size() / elementSize;
+    uint16 elementSize = ReflectionArrayGetElementSize(context->field);
+    uint32 arraySize = array.Size();
 
-	context->arraySize = arraySize;
-	context->walkArray(context, ReflectionWalkType::Begin);
-		
-	for(size_t i = 0; i < arraySize; i++)
-	{
-		void* address = (&array[0] + i * elementSize);
-		
-		context->elementAddress = address;
-		
-		if(FieldIsPointer(field) && !ReflectionWalkPointer(context))
-			continue;
+    context->arraySize = arraySize;
+    context->walkArray(context, ReflectionWalkType::Begin);
+        
+    for(size_t i = 0; i < arraySize; i++)
+    {
+        void* address = (&array[0] + i * elementSize);
+        
+        context->elementAddress = address;
+        
+        if(FieldIsPointer(field) && !ReflectionWalkPointer(context))
+            continue;
 
-		Object* object = context->object;
-		Type* type = context->type;
+        Object* object = context->object;
+        Type* type = context->type;
 
-		context->object = (Object*) context->elementAddress;
-		context->type = field->type;
+        context->object = (Object*) context->elementAddress;
+        context->type = field->type;
 
-		bool isObject = ClassInherits((Class*) context->type, ObjectGetType());
-		if( isObject ) context->type = ClassGetType(context->object);
+        bool isObject = ClassInherits((Class*) context->type, ObjectGetType());
+        if( isObject ) context->type = ClassGetType(context->object);
 
-		if( isObject && !context->type )
-		{
-			LogDebug("Could not get type out of object");
-			return;
-		}
+        if( isObject && !context->type )
+        {
+            LogDebug("Could not get type out of object");
+            return;
+        }
 
-		context->walkArray(context, ReflectionWalkType::ElementBegin);
-		ReflectionWalkType(context, context->type);
-		context->walkArray(context, ReflectionWalkType::ElementEnd);
+        context->walkArray(context, ReflectionWalkType::ElementBegin);
+        ReflectionWalkType(context, context->type);
+        context->walkArray(context, ReflectionWalkType::ElementEnd);
 
-		context->object = object;
-		context->type = type;
-	}
+        context->object = object;
+        context->type = type;
+    }
 
-	context->walkArray(context, ReflectionWalkType::End);
+    context->walkArray(context, ReflectionWalkType::End);
 }
 
 //-----------------------------------//
 
 static ReflectionWalkFunction HandleFindSerializeFunction(ReflectionContext* context, Class* klass)
 {
-	assert(context && "Expected a valid reflection context");
-	if( !klass ) return nullptr;
+    assert(context && "Expected a valid reflection context");
+    if( !klass ) return nullptr;
 
-	ReflectionHandleContext handleContext;
-	if (!ReflectionFindHandleContext(context->handleContextMap, klass, handleContext))
-		return nullptr;
+    ReflectionHandleContext handleContext;
+    if (!ReflectionFindHandleContext(context->handleContextMap, klass, handleContext))
+        return nullptr;
 
-	if( handleContext.serialize )
-		return handleContext.serialize;
-	
-	Class* parent = klass->parent;
-	return HandleFindSerializeFunction(context, parent);
+    if( handleContext.serialize )
+        return handleContext.serialize;
+    
+    Class* parent = klass->parent;
+    return HandleFindSerializeFunction(context, parent);
 }
 
 //-----------------------------------//
 
 void ReflectionWalkCompositeField(ReflectionContext* context)
 {
-	const Field* field = context->field;
+    const Field* field = context->field;
 
-	if( !FieldIsSerializable(field) )
-	{
-		LogDebug("Ignoring field '%s'", field->name);
-		return;
-	}
+    if( !FieldIsSerializable(field) )
+    {
+        LogDebug("Ignoring field '%s'", field->name);
+        return;
+    }
 
-	void* address = context->address;
-	void* elementAddress = context->elementAddress;
-	Type* type = context->type;
-	Object* object = context->object;
+    void* address = context->address;
+    void* elementAddress = context->elementAddress;
+    Type* type = context->type;
+    Object* object = context->object;
 
- 	context->address = ClassGetFieldAddress(context->object, field);
-	context->elementAddress = context->address;
-	context->type = field->type;
+    context->address = ClassGetFieldAddress(context->object, field);
+    context->elementAddress = context->address;
+    context->type = field->type;
 
-	if( ReflectionIsComposite(field->type) )
-		context->object = (Object*) context->address;
+    if( ReflectionIsComposite(field->type) )
+        context->object = (Object*) context->address;
 
-	ReflectionWalkFunction handleSerialize = nullptr;
+    ReflectionWalkFunction handleSerialize = nullptr;
 
-	if( FieldIsPointer(field) && !ReflectionWalkPointer(context) )
-		goto exit;
+    if( FieldIsPointer(field) && !ReflectionWalkPointer(context) )
+        goto exit;
 
-	context->walkCompositeField(context, ReflectionWalkType::Begin);
+    context->walkCompositeField(context, ReflectionWalkType::Begin);
 
-	if (ReflectionIsComposite(field->type))
-		HandleFindSerializeFunction(context, (Class*) field->type);
+    if (ReflectionIsComposite(field->type))
+        HandleFindSerializeFunction(context, (Class*) field->type);
 
-	// Check for custom handle serialize functions.
-	if( FieldIsHandle(field) && handleSerialize )
-	{
-		handleSerialize(context, ReflectionWalkType::Element);
-	}
-	else if( field->serialize )
-	{
-		field->serialize(context, ReflectionWalkType::Element);
-	}
-	else if( FieldIsArray(field) )
-	{
-		ReflectionWalkArray(context);
-	}
-	else if( FieldIsPointer(field) )
-	{
-		Object* object = context->object;
-		Type* type = context->type;
+    // Check for custom handle serialize functions.
+    if( FieldIsHandle(field) && handleSerialize )
+    {
+        handleSerialize(context, ReflectionWalkType::Element);
+    }
+    else if( field->serialize )
+    {
+        field->serialize(context, ReflectionWalkType::Element);
+    }
+    else if( FieldIsArray(field) )
+    {
+        ReflectionWalkArray(context);
+    }
+    else if( FieldIsPointer(field) )
+    {
+        Object* object = context->object;
+        Type* type = context->type;
 
-		context->type = ClassGetType(context->object);
-		ReflectionWalkType(context, context->type);
+        context->type = ClassGetType(context->object);
+        ReflectionWalkType(context, context->type);
 
-		context->type = type;
-		context->object = object;
-	}
-	else
-	{
-		ReflectionWalkType(context, field->type);
-	}
+        context->type = type;
+        context->object = object;
+    }
+    else
+    {
+        ReflectionWalkType(context, field->type);
+    }
 
-	context->walkCompositeField(context, ReflectionWalkType::End);
+    context->walkCompositeField(context, ReflectionWalkType::End);
 
 exit:
 
-	context->address = address;
-	context->elementAddress = elementAddress;
-	context->type = type;
-	context->object = object;
+    context->address = address;
+    context->elementAddress = elementAddress;
+    context->type = type;
+    context->object = object;
 }
 
 //-----------------------------------//
 
 void ReflectionWalkComposite(ReflectionContext* context)
 {
-	bool isTopComposite = context->composite == context->objectClass;
+    bool isTopComposite = context->composite == context->objectClass;
 
-	if( isTopComposite )
-		context->walkComposite(context, ReflectionWalkType::Begin);
+    if( isTopComposite )
+        context->walkComposite(context, ReflectionWalkType::Begin);
 
-	if( ClassHasParent(context->composite) )
-	{
-		Class* current = context->composite;
-		
-		context->composite = ClassGetParent(current);
-		ReflectionWalkComposite(context);
-		
-		context->composite = current;
-	}
+    if( ClassHasParent(context->composite) )
+    {
+        Class* current = context->composite;
+        
+        context->composite = ClassGetParent(current);
+        ReflectionWalkComposite(context);
+        
+        context->composite = current;
+    }
 
-	const Vector<Field*>& fields = context->composite->fields;
+    const Vector<Field*>& fields = context->composite->fields;
 
-	const Field* field = context->field; 
+    const Field* field = context->field; 
 
-	for( size_t i = 0; i < fields.Size(); i++ )
-	{
-		context->field = fields[i];
-		ReflectionWalkCompositeField(context);
-	}
+    for( size_t i = 0; i < fields.Size(); i++ )
+    {
+        context->field = fields[i];
+        ReflectionWalkCompositeField(context);
+    }
 
-	context->field = field;
+    context->field = field;
 
-	if( isTopComposite )
-		context->walkComposite(context, ReflectionWalkType::End);
+    if( isTopComposite )
+        context->walkComposite(context, ReflectionWalkType::End);
 }
 
 //-----------------------------------//
 
 static void ReflectionWalkType(ReflectionContext* context, Type* type)
 {
-	bool hasCustomSerialize = type->serialize != 0;
+    bool hasCustomSerialize = type->serialize != 0;
 
-	switch(type->kind)
-	{
-	case TypeKind::Composite:
-	{
-		Class* objectClass = context->objectClass;
-		Class* composite = context->composite;
+    switch(type->kind)
+    {
+    case TypeKind::Composite:
+    {
+        Class* objectClass = context->objectClass;
+        Class* composite = context->composite;
 
-		context->objectClass = (Class*) type;
-		context->composite = context->objectClass;
+        context->objectClass = (Class*) type;
+        context->composite = context->objectClass;
 
-		// If the type has a custom serializer, call it.
-		if( hasCustomSerialize )
-			type->serialize(context, ReflectionWalkType::Element);
-		else
-			ReflectionWalkComposite(context);
+        // If the type has a custom serializer, call it.
+        if( hasCustomSerialize )
+            type->serialize(context, ReflectionWalkType::Element);
+        else
+            ReflectionWalkComposite(context);
 
-		context->objectClass = objectClass;
-		context->composite = composite;
-		break;
-	}
-	case TypeKind::Primitive:
-		context->primitive = (Primitive*) type;
-		ReflectionWalkPrimitive(context);
-		break;
-	case TypeKind::Enumeration:
-		context->enume = (Enum*) type;
-		ReflectionWalkEnum(context);
-		break;
-	}
+        context->objectClass = objectClass;
+        context->composite = composite;
+        break;
+    }
+    case TypeKind::Primitive:
+        context->primitive = (Primitive*) type;
+        ReflectionWalkPrimitive(context);
+        break;
+    case TypeKind::Enumeration:
+        context->enume = (Enum*) type;
+        ReflectionWalkEnum(context);
+        break;
+    }
 }
 
 //-----------------------------------//
 
 void ReflectionWalk(const Object* object, ReflectionContext* context)
 {
-	if( !context ) return;
+    if( !context ) return;
 
-	Class* objectClass = ClassGetType(object);
-	if( !objectClass ) return;
+    Class* objectClass = ClassGetType(object);
+    if( !objectClass ) return;
 
-	context->object = (Object*) object;
-	context->objectClass = objectClass;
-	context->composite = objectClass;
-	
-	ReflectionWalkType(context, objectClass);
+    context->object = (Object*) object;
+    context->objectClass = objectClass;
+    context->composite = objectClass;
+    
+    ReflectionWalkType(context, objectClass);
 }
 
 //-----------------------------------//
 
 Object* Serializer::loadObjectFromFile(Serializer& serializer, const Path& file)
 {
-	FileStream stream(file.c_str(), StreamOpenMode::Read);
-	serializer.stream = (Stream *)&stream;
+    FileStream stream(file, StreamOpenMode::Read);
+    serializer.stream = (Stream *)&stream;
 
-	Object* object = serializer.load();
-	stream.close();
+    Object* object = serializer.load();
+    stream.close();
 
-	return object;
+    return object;
 }
 
 //-----------------------------------//
 
 bool Serializer::saveObjectToFile(Serializer& serializer, const Path& file, Object* object)
 {
-	FileStream stream(file.c_str(), StreamOpenMode::Write);
+    FileStream stream(file, StreamOpenMode::Write);
 
-	serializer.stream = (Stream *)&stream;
-	serializer.object = object;
-	
-	if (!serializer.save(object))
-		return false;
+    serializer.stream = (Stream *)&stream;
+    serializer.object = object;
+    
+    if (!serializer.save(object))
+        return false;
 
-	stream.close();
+    stream.close();
 
-	return true;
+    return true;
 }
 
 //-----------------------------------//
@@ -497,45 +497,45 @@ typedef Vector<Object*> ObjectRawPtrArray;
 
 void* ReflectionArrayResize( ReflectionContext* context, void* address, uint32 size )
 {
-	const Field* field = context->field;
+    const Field* field = context->field;
 
-	if (FieldIsRawPointer(field))
-	{
-		ObjectRawPtrArray* array = (ObjectRawPtrArray*) address;
-		array->Resize(size);
-		return &array->Front();
-	}
-	else if( FieldIsRefPointer(field) )
-	{
-		ObjectRefPtrArray* array = (ObjectRefPtrArray*) address;
-		array->Resize(size);
-		return &array->Front();
-	}
+    if (FieldIsRawPointer(field))
+    {
+        ObjectRawPtrArray* array = (ObjectRawPtrArray*) address;
+        array->Resize(size);
+        return &array->Front();
+    }
+    else if( FieldIsRefPointer(field) )
+    {
+        ObjectRefPtrArray* array = (ObjectRefPtrArray*) address;
+        array->Resize(size);
+        return &array->Front();
+    }
 #if 0
-	else if( FieldIsSharedPointer(field) )
-	{
-		ObjectSharedPtrArray* array = (ObjectSharedPtrArray*) address;
-		array->resize(size);
-		return &array->front();
-	}
+    else if( FieldIsSharedPointer(field) )
+    {
+        ObjectSharedPtrArray* array = (ObjectSharedPtrArray*) address;
+        array->resize(size);
+        return &array->front();
+    }
 #endif
-	else if( field->resize )
-	{
-		return field->resize(address, size);
-	}
-	
-	LogAssert("Unknown array type");
-	return nullptr;
+    else if( field->resize )
+    {
+        return field->resize(address, size);
+    }
+    
+    LogAssert("Unknown array type");
+    return nullptr;
 }
 
 //-----------------------------------//
 
 uint16 ReflectionArrayGetElementSize(const Field* field)
 {
-	if( FieldIsPointer(field) )
-		return field->pointer_size;
-	else
-		return field->size;
+    if( FieldIsPointer(field) )
+        return field->pointer_size;
+    else
+        return field->size;
 }
 
 //-----------------------------------//

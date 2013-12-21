@@ -8,8 +8,6 @@
 #include "DebugGeometry.h"
 #include "BoundingBox.h"
 #include "Frustum.h"
-#include "GeometryBuffer.h"
-#include "Ray.h"
 #include "RenderBatch.h"
 #include "Vector.h"
 
@@ -47,23 +45,6 @@ void Flood::DebugDrawer::DrawBox(Flood::BoundingBox box)
     _marshal0.max = _marshal2;
     auto arg0 = _marshal0;
     ((::DebugDrawer*)NativePtr)->drawBox(arg0);
-}
-
-void Flood::DebugDrawer::DrawRay(Flood::Ray ray, float length)
-{
-    auto _marshal0 = ::Ray();
-    auto _marshal1 = ::Vector3();
-    _marshal1.x = ray.Origin.X;
-    _marshal1.y = ray.Origin.Y;
-    _marshal1.z = ray.Origin.Z;
-    _marshal0.origin = _marshal1;
-    auto _marshal2 = ::Vector3();
-    _marshal2.x = ray.Direction.X;
-    _marshal2.y = ray.Direction.Y;
-    _marshal2.z = ray.Direction.Z;
-    _marshal0.direction = _marshal2;
-    auto arg0 = _marshal0;
-    ((::DebugDrawer*)NativePtr)->drawRay(arg0, length);
 }
 
 void Flood::DebugDrawer::DrawFrustum(Flood::Frustum frustum)
@@ -195,27 +176,5 @@ Flood::RenderBatch^ Flood::DebugDrawer::Quads::get()
 void Flood::DebugDrawer::Quads::set(Flood::RenderBatch^ value)
 {
     ((::DebugDrawer*)NativePtr)->quads = (::RenderBatch*)value->NativePtr;
-}
-
-System::Collections::Generic::List<Flood::RenderBatch^>^ Flood::DebugDrawer::Renderables::get()
-{
-    auto _tmpRenderables = gcnew System::Collections::Generic::List<Flood::RenderBatch^>();
-    for(auto _element : ((::DebugDrawer*)NativePtr)->renderables)
-    {
-        auto _marshalElement = gcnew Flood::RenderBatch((::RenderBatch*)_element);
-        _tmpRenderables->Add(_marshalElement);
-    }
-    return _tmpRenderables;
-}
-
-void Flood::DebugDrawer::Renderables::set(System::Collections::Generic::List<Flood::RenderBatch^>^ value)
-{
-    auto _tmpvalue = std::vector<::RenderBatch*>();
-    for each(Flood::RenderBatch^ _element in value)
-    {
-        auto _marshalElement = (::RenderBatch*)_element->NativePtr;
-        _tmpvalue.push_back(_marshalElement);
-    }
-    ((::DebugDrawer*)NativePtr)->renderables = _tmpvalue;
 }
 

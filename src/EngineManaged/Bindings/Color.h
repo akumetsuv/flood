@@ -14,7 +14,10 @@ namespace Flood
 {
     value struct Color;
     value struct Vector3;
+}
 
+namespace Flood
+{
     public value struct Color
     {
     public:
@@ -32,6 +35,8 @@ namespace Flood
         bool NearEqual(Flood::Color a, float tolerance);
 
         static Flood::Color operator*(Flood::Color __op, float s);
+
+        static operator Flood::Vector3(Flood::Color __op);
 
         static property Flood::Color White
         {

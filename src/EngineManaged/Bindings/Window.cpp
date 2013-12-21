@@ -17,7 +17,6 @@ Flood::WindowSettings::WindowSettings(::WindowSettings* native)
 {
     Width = native->width;
     Height = native->height;
-    Title = clix::marshalString<clix::E_UTF8>(native->title);
     Handle = IntPtr(native->handle);
     Styles = (Flood::WindowStyles)native->styles;
 }
@@ -27,19 +26,8 @@ Flood::WindowSettings::WindowSettings(System::IntPtr native)
     auto __native = (::WindowSettings*)native.ToPointer();
     Width = __native->width;
     Height = __native->height;
-    Title = clix::marshalString<clix::E_UTF8>(__native->title);
     Handle = IntPtr(__native->handle);
     Styles = (Flood::WindowStyles)__native->styles;
-}
-
-Flood::WindowSettings::WindowSettings(unsigned short width, unsigned short height, System::String^ title, Flood::WindowStyles styles)
-{
-    ::WindowSettings _native((::uint16)(::uint16_t)width, (::uint16)(::uint16_t)height, clix::marshalString<clix::E_UTF8>(title), (::WindowStyles)styles);
-    this->Width = _native.width;
-    this->Height = _native.height;
-    this->Title = clix::marshalString<clix::E_UTF8>(_native.title);
-    this->Handle = IntPtr(_native.handle);
-    this->Styles = (Flood::WindowStyles)_native.styles;
 }
 
 Flood::Window::Window(::Window* native)
@@ -109,6 +97,21 @@ bool Flood::Window::HasFocus()
     return __ret;
 }
 
+void Flood::Window::HandleWindowResize()
+{
+    ((::Window*)NativePtr)->handleWindowResize();
+}
+
+void Flood::Window::HandleWindowClose()
+{
+    ((::Window*)NativePtr)->handleWindowClose();
+}
+
+void Flood::Window::HandleWindowFocus(bool focusLost)
+{
+    ((::Window*)NativePtr)->handleWindowFocus(focusLost);
+}
+
 bool Flood::Window::Equals(System::Object^ object)
 {
     if (!object) return false;
@@ -121,13 +124,6 @@ bool Flood::Window::Equals(System::Object^ object)
 int Flood::Window::GetHashCode()
 {
     return (int)NativePtr;
-}
-
-void Flood::Window::Title::set(System::String^ value)
-{
-    auto title = value;
-    auto arg0 = clix::marshalString<clix::E_UTF8>(title);
-    ((::Window*)NativePtr)->setTitle(arg0);
 }
 
 void Flood::Window::CursorVisible::set(bool value)
@@ -159,6 +155,31 @@ Flood::Settings Flood::Window::Settings::get()
 {
     auto &__ret = ((::Window*)NativePtr)->getSettings();
     return Flood::Settings((::Settings*)&__ret);
+}
+
+Flood::WindowSettings Flood::Window::Settings1::get()
+{
+    return Flood::WindowSettings((::WindowSettings*)&((::Window*)NativePtr)->settings);
+}
+
+void Flood::Window::Settings1::set(Flood::WindowSettings value)
+{
+    auto _marshal0 = ::WindowSettings();
+    _marshal0.width = (::uint16)(::uint16_t)value.Width;
+    _marshal0.height = (::uint16)(::uint16_t)value.Height;
+    _marshal0.handle = (void*)value.Handle.ToPointer();
+    _marshal0.styles = (::WindowStyles)value.Styles;
+    ((::Window*)NativePtr)->settings = _marshal0;
+}
+
+Flood::RenderContext^ Flood::Window::RenderContext::get()
+{
+    return gcnew Flood::RenderContext((::RenderContext*)((::Window*)NativePtr)->renderContext.get());
+}
+
+void Flood::Window::RenderContext::set(Flood::RenderContext^ value)
+{
+    ((::Window*)NativePtr)->renderContext = (::RenderContext*)value->NativePtr;
 }
 
 void Flood::Window::Idle::add(System::Action^ evt)

@@ -6,8 +6,7 @@
 ************************************************************************/
 
 #include "Serialization.h"
-#include "Memory.h"
-#include "Stream.h"
+#include "HashMap.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;

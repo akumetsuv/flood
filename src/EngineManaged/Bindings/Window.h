@@ -13,17 +13,19 @@
 
 namespace Flood
 {
-    enum struct WindowStyles;
-    ref class InputManager;
-    ref class RenderContext;
-    ref class Window;
-    value struct RenderContextSettings;
-    value struct Vector2i;
     value struct WindowSettings;
+    value struct Settings;
+    enum struct WindowStyles;
+    ref class Window;
+    ref class RenderTarget;
+    ref class RenderContext;
+    value struct Vector2i;
+    ref class InputManager;
+    value struct RenderContextSettings;
+}
 
-    /// <summary>
-    /// Represents window styles as bit-flags.
-    /// </summary>
+namespace Flood
+{
     [System::Flags]
     public enum struct WindowStyles
     {
@@ -47,11 +49,8 @@ namespace Flood
 
         WindowSettings(::WindowSettings* native);
         WindowSettings(System::IntPtr native);
-        WindowSettings(unsigned short width, unsigned short height, System::String^ title, Flood::WindowStyles styles);
-
         unsigned short Width;
         unsigned short Height;
-        System::String^ Title;
         System::IntPtr Handle;
         Flood::WindowStyles Styles;
     };
@@ -70,10 +69,6 @@ namespace Flood
         /// </summary>
         Window(Flood::WindowSettings settings);
 
-        property System::String^ Title
-        {
-            void set(System::String^);
-        }
         property bool CursorVisible
         {
             void set(bool);
@@ -93,6 +88,16 @@ namespace Flood
         property Flood::Settings Settings
         {
             Flood::Settings get();
+        }
+        property Flood::WindowSettings Settings1
+        {
+            Flood::WindowSettings get();
+            void set(Flood::WindowSettings);
+        }
+        property Flood::RenderContext^ RenderContext
+        {
+            Flood::RenderContext^ get();
+            void set(Flood::RenderContext^);
         }
     private:
         delegate void _IdleDelegate();
@@ -181,6 +186,21 @@ namespace Flood
         /// Gets if the window has focus.
         /// </summary>
         virtual bool HasFocus();
+
+        /// <summary>
+        /// Handles the resize event.
+        /// </summary>
+        void HandleWindowResize();
+
+        /// <summary>
+        /// Handles the close event.
+        /// </summary>
+        void HandleWindowClose();
+
+        /// <summary>
+        /// Handles the focus event.
+        /// </summary>
+        void HandleWindowFocus(bool focusLost);
 
         virtual bool Equals(System::Object^ object) override;
 

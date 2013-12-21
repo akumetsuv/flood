@@ -13,10 +13,14 @@
 
 namespace Flood
 {
+    ref class WindowManager;
     ref class InputManager;
     ref class PlatformManager;
-    ref class WindowManager;
+    ref class Subsystem;
+}
 
+namespace Flood
+{
     /// <summary>
     /// This class is a platform abstraction layer responsible to provide instances
     /// for platform-dependent engine subsytems like the window and input managers.

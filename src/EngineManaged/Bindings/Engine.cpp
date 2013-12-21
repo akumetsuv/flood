@@ -11,7 +11,6 @@
 #include "PlatformManager.h"
 #include "RenderDevice.h"
 #include "ResourceManager.h"
-#include "Stream.h"
 #include "Subsystem.h"
 #include "WindowManager.h"
 
@@ -67,6 +66,13 @@ bool Flood::Engine::Equals(System::Object^ object)
 int Flood::Engine::GetHashCode()
 {
     return (int)NativePtr;
+}
+
+Flood::Engine^ Flood::Engine::GetEngine()
+{
+    auto __ret = ::GetEngine();
+    if (__ret == nullptr) return nullptr;
+    return gcnew Flood::Engine((::Engine*)__ret);
 }
 
 System::IntPtr Flood::Engine::Instance::get()
@@ -142,10 +148,13 @@ Flood::Log^ Flood::Engine::Logger::get()
     return gcnew Flood::Log((::Log*)__ret);
 }
 
-Flood::Engine^ Flood::FloodEngine::GetEngine()
+Flood::Log^ Flood::Engine::Log::get()
 {
-    auto __ret = ::GetEngine();
-    if (__ret == nullptr) return nullptr;
-    return gcnew Flood::Engine((::Engine*)__ret);
+    return gcnew Flood::Log((::Log*)((::Engine*)NativePtr)->log);
+}
+
+void Flood::Engine::Log::set(Flood::Log^ value)
+{
+    ((::Engine*)NativePtr)->log = (::Log*)value->NativePtr;
 }
 

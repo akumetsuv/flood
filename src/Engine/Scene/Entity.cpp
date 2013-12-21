@@ -20,36 +20,36 @@ NAMESPACE_ENGINE_BEGIN
 //-----------------------------------//
 
 REFLECT_CHILD_CLASS(Entity, Object)
-	FIELD_PRIMITIVE(1, string, name)
-	FIELD_PRIMITIVE(2, bool, visible)
-	FIELD_VECTOR_PTR(3, Component, ComponentPtr, components, RefPointer)
-	FIELD_PRIMITIVE(4, int32, tags)
-	//FIELD_PRIMITIVE_CUSTOM(4, int32, tags, Bitfield)
+    FIELD_PRIMITIVE(1, string, name)
+    FIELD_PRIMITIVE(2, bool, visible)
+    FIELD_VECTOR_PTR(3, Component, ComponentPtr, components, RefPointer)
+    FIELD_PRIMITIVE(4, int32, tags)
+    //FIELD_PRIMITIVE_CUSTOM(4, int32, tags, Bitfield)
 REFLECT_CLASS_END()
 
 //-----------------------------------//
 
 Entity* EntityCreate(Allocator* alloc)
 {
-	return Allocate(alloc, Entity);
+    return Allocate(alloc, Entity);
 }
 
 //-----------------------------------//
 
 Entity::Entity()
-	: visible(true)
-	, tags(0)
-	, parent(nullptr)
+    : visible(true)
+    , tags(0)
+    , parent(nullptr)
 {
 }
 
 //-----------------------------------//
 
 Entity::Entity( const String& name )
-	: name(name)
-	, visible(true)
-	, tags(0)
-	, parent(nullptr)
+    : name(name)
+    , visible(true)
+    , tags(0)
+    , parent(nullptr)
 {
 }
 
@@ -57,263 +57,263 @@ Entity::Entity( const String& name )
 
 Entity::~Entity()
 {
-	// Keep a reference so it is the last component destroyed.
-	TransformPtr transform = getTransform();
-	
-	components.clear();
+    // Keep a reference so it is the last component destroyed.
+    TransformPtr transform = getTransform();
+    
+    components.Clear();
 
-	ComponentMap::iterator it = componentsMap.begin();
-	
-	for(; it != componentsMap.end(); it++ )
-	{
-		ComponentPtr& component = it->second;
-		component.reset();
-	}
+    ComponentMap::Iterator it = componentsMap.Begin();
+    
+    for(; it != componentsMap.End(); it++ )
+    {
+        ComponentPtr& component = it->second;
+        component.reset();
+    }
 }
 
 //-----------------------------------//
 
 static bool IsGroup(Entity* entity)
 {
-	return entity && ClassInherits(ClassGetType(entity), GroupGetType());
+    return entity && ClassInherits(ClassGetType(entity), GroupGetType());
 }
 
 //-----------------------------------//
 
 bool Entity::addComponent( const ComponentPtr& component )
 {
-	if( !component ) return false;
+    if( !component ) return false;
 
-	Class* type = component->getType();
+    Class* type = component->getType();
 
-	if( componentsMap.find(type) != componentsMap.end() )
-	{
-		LogWarn( "Component '%s' already exists in '%s'", type->name, name.c_str() );
-		return false;
-	}
+    if( componentsMap.Find(type) != componentsMap.End() )
+    {
+        LogWarn( "Component '%s' already exists in '%s'", type->name, name.CString() );
+        return false;
+    }
 
-	componentsMap[type] = component;
-	component->setEntity(this);
+    componentsMap[type] = component;
+    component->setEntity(this);
 
-	onComponentAdded(component);
-	sendEvents();
+    onComponentAdded(component);
+    sendEvents();
 
-	if( IsGroup(parent) )
-	{
-		Group* group = (Group*) parent;
-		group->onEntityComponentAdded(component);
-	}
+    if( IsGroup(parent) )
+    {
+        Group* group = (Group*) parent;
+        group->onEntityComponentAdded(component);
+    }
 
-	components.push_back(component);
+    components.Push(component);
 
-	return true;
+    return true;
 }
 
 //-----------------------------------//
 
 bool Entity::removeComponent( const ComponentPtr& component )
 {
-	if( !component ) return false;
-	
-	Class* type = component->getType();
+    if( !component ) return false;
+    
+    Class* type = component->getType();
 
-	ComponentMap::iterator it = componentsMap.find(type);
-	
-	if( it == componentsMap.end() )
-		return false;
+    ComponentMap::Iterator it = componentsMap.Find(type);
+    
+    if( it == componentsMap.End() )
+        return false;
 
-	componentsMap.erase(it);
+    componentsMap.Erase(it);
 
-	onComponentRemoved(component);
-	sendEvents();
+    onComponentRemoved(component);
+    sendEvents();
 
-	if( IsGroup(parent) )
-	{
-		Group* group = (Group*) parent;
-		group->onEntityComponentRemoved(component);
-	}
+    if( IsGroup(parent) )
+    {
+        Group* group = (Group*) parent;
+        group->onEntityComponentRemoved(component);
+    }
 
-	if( ClassInherits(type, ReflectionGetType(Geometry)) )
-		getTransform()->markBoundingVolumeDirty();
+    if( ClassInherits(type, ReflectionGetType(Geometry)) )
+        getTransform()->markBoundingVolumeDirty();
 
-	return true;
+    return true;
 }
 
 //-----------------------------------//
 
 ComponentPtr Entity::getComponent(const char* name) const
 {
-	Type* type = ReflectionFindType(name);
+    Type* type = ReflectionFindType(name);
 
-	if( !ReflectionIsComposite(type) )
-		return nullptr;
+    if( !ReflectionIsComposite(type) )
+        return nullptr;
 
-	return getComponent((Class*) type);
+    return getComponent((Class*) type);
 }
 
 //-----------------------------------//
 
 ComponentPtr Entity::getComponent(Class* klass) const
 {
-	ComponentMap::const_iterator it = componentsMap.find(klass);
-		
-	if( it == componentsMap.end() )
-		return nullptr;
+    ComponentMap::ConstIterator it = componentsMap.Find(klass);
+        
+    if( it == componentsMap.End() )
+        return nullptr;
 
-	return it->second;
+    return it->second;
 }
 
 //-----------------------------------//
 
 ComponentPtr Entity::getComponentFromFamily(Class* klass) const
 {
-	ComponentMap::const_iterator it;
-	
-	for( it = componentsMap.begin(); it != componentsMap.end(); it++ )
-	{
-		const ComponentPtr& component = it->second;
-		Class* componentClass = component->getType();
+    ComponentMap::ConstIterator it;
+    
+    for( it = componentsMap.Begin(); it != componentsMap.End(); it++ )
+    {
+        const ComponentPtr& component = it->second;
+        Class* componentClass = component->getType();
 
-		if( ClassInherits(componentClass, klass) )
-			return component;
-	}
+        if( ClassInherits(componentClass, klass) )
+            return component;
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
 //-----------------------------------//
 
-std::vector<GeometryPtr> Entity::getGeometry() const
+Vector<GeometryPtr> Entity::getGeometry() const
 {
-	std::vector<GeometryPtr> geoms;
+    Vector<GeometryPtr> geoms;
 
-	ComponentMap::const_iterator it;
-	for( it = componentsMap.begin(); it != componentsMap.end(); it++ )
-	{
-		const ComponentPtr& component = it->second;
+    ComponentMap::ConstIterator it;
+    for( it = componentsMap.Begin(); it != componentsMap.End(); it++ )
+    {
+        const ComponentPtr& component = it->second;
 
-		if( !ClassInherits(component->getType(), ReflectionGetType(Geometry)) )
-			continue;
+        if( !ClassInherits(component->getType(), ReflectionGetType(Geometry)) )
+            continue;
 
-		const GeometryPtr& geo = RefCast<Geometry>(component);
-		geoms.push_back(geo);
-	}
+        const GeometryPtr& geo = RefCast<Geometry>(component);
+        geoms.Push(geo);
+    }
 
-	return geoms;
+    return geoms;
 }
 
 //-----------------------------------//
 
 void Entity::update( float delta )
 {
-	// Update all geometry bounding boxes first.
-	const std::vector<GeometryPtr>& geoms = getGeometry();
+    // Update all geometry bounding boxes first.
+    const Vector<GeometryPtr>& geoms = getGeometry();
 
-	for( size_t i = 0; i < geoms.size(); i++ )
-	{
-		Geometry* geom = geoms[i].get();
-		geom->update( delta );
-	}
+    for( size_t i = 0; i < geoms.Size(); i++ )
+    {
+        Geometry* geom = geoms[i].get();
+        geom->update( delta );
+    }
 
-	// Update the transform component.
-	Transform* transform = getTransform().get();
-	if( transform ) transform->update( delta );
+    // Update the transform component.
+    Transform* transform = getTransform().get();
+    if( transform ) transform->update( delta );
 
-	// Update the other components.
-	ComponentMap::const_iterator it;
-	for( it = componentsMap.begin(); it != componentsMap.end(); it++ )
-	{
-		const ComponentPtr& component = it->second;
+    // Update the other components.
+    ComponentMap::ConstIterator it;
+    for( it = componentsMap.Begin(); it != componentsMap.End(); it++ )
+    {
+        const ComponentPtr& component = it->second;
 
-		if( component == transform ) 
-			continue;
+        if( component == transform ) 
+            continue;
 
-		component->update( delta );
-	}
+        component->update( delta );
+    }
 }
 
 //-----------------------------------//
 
 void Entity::fixUp()
 {
-	for(size_t i = 0; i < components.size(); i++ )
-	{
-		Component* component = components[i].get();
-		if( !component ) continue;
+    for(size_t i = 0; i < components.Size(); i++ )
+    {
+        Component* component = components[i].get();
+        if( !component ) continue;
 
-		component->setEntity(this);
-		
-		Class* type = component->getType();
-		componentsMap[type] = component;
-	}
+        component->setEntity(this);
+        
+        Class* type = component->getType();
+        componentsMap[type] = component;
+    }
 
-	if( !getTransform() ) addTransform();
+    if( !getTransform() ) addTransform();
 }
 
 //-----------------------------------//
 
 void Entity::sendEvents()
 {
-	if( !parent ) return;
+    if( !parent ) return;
 
-	Class* type =  parent->getType();
+    Class* type =  parent->getType();
 
-	if( !ClassInherits(type, ReflectionGetType(Group)) )
-		return;
+    if( !ClassInherits(type, ReflectionGetType(Group)) )
+        return;
 
-	Group* group = (Group*) parent;
-	group->onEntityChanged();
+    Group* group = (Group*) parent;
+    group->onEntityChanged();
 }
 
 //-----------------------------------//
 
 bool Entity::addTransform()
 {
-	Transform* transform = TransformCreate( AllocatorGetThis() );
-	return addComponent(transform);
+    Transform* transform = TransformCreate( AllocatorGetThis() );
+    return addComponent(transform);
 }
 
 //-----------------------------------//
 
 TransformPtr Entity::getTransform() const
 {
-	return getComponent<Transform>();
+    return getComponent<Transform>();
 }
 
 //-----------------------------------//
 
 Entity* Entity::getParent() const
 {
-	return parent;
+    return parent;
 }
 
 //-----------------------------------//
 
 void Entity::setName( const String& name )
 {
-	this->name = name;
-	sendEvents();
+    this->name = name;
+    sendEvents();
 }
 
 //-----------------------------------//
 
 bool Entity::isVisible() const
 {
-	return visible;
+    return visible;
 }
 
 //-----------------------------------//
 
 bool Entity::getTag(int32 index) const
 {
-	return GetBitFlag(tags, (uint32)(1 << index));
+    return GetBitFlag(tags, (uint32)(1 << index));
 }
 
 //-----------------------------------//
 
 void Entity::setTag(int32 index, bool state)
 {
-	SetBitFlag(tags, (uint32)(1 << index), state);
+    SetBitFlag(tags, (uint32)(1 << index), state);
 }
 
 //-----------------------------------//

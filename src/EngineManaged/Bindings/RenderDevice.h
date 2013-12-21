@@ -12,24 +12,22 @@
 
 namespace Flood
 {
-    enum struct RenderPipeline;
-    ref class Material;
-    ref class RenderBackend;
-    ref class RenderBatch;
-    ref class RenderBlock;
+    ref class Texture;
     ref class RenderBuffer;
     ref class RenderContext;
+    ref class RenderBackend;
+    ref class RenderBatch;
     ref class RenderDevice;
+    enum struct RenderPipeline;
     ref class RenderTarget;
     ref class RenderView;
-    ref class Texture;
     value struct RenderState;
+    ref class RenderBlock;
+    ref class Material;
+}
 
-    /// <summary>
-    /// There are a couple rendering pipelines. You can choose each one depending
-    /// on the hardware functionality (shaders don't exist on some old or mobile
-    /// hardware) or user preference (fixed function is faster on some machines).
-    /// </summary>
+namespace Flood
+{
     public enum struct RenderPipeline
     {
         Fixed = 0,
@@ -77,6 +75,16 @@ namespace Flood
             Flood::RenderView^ get();
             void set(Flood::RenderView^);
         }
+        property Flood::RenderTarget^ ActiveTarget
+        {
+            Flood::RenderTarget^ get();
+            void set(Flood::RenderTarget^);
+        }
+        property Flood::RenderBackend^ RenderBackend
+        {
+            Flood::RenderBackend^ get();
+            void set(Flood::RenderBackend^);
+        }
         void Render(Flood::RenderBlock^ queue);
 
         void UpdateRenderTargets();
@@ -85,15 +93,23 @@ namespace Flood
 
         bool IsFixedPipeline();
 
+        bool SetupRenderStateMatrix(Flood::RenderState state);
+
+        bool SetupRenderStateOverlay(Flood::RenderState _0);
+
+        void BindTextureUnits(Flood::RenderState state, bool bindUniforms);
+
+        void UnbindTextureUnits(Flood::Material^ material);
+
+        bool BindBuffers(Flood::RenderBatch^ _0);
+
+        bool UnbindBuffers(Flood::RenderBatch^ _0);
+
         virtual bool Equals(System::Object^ object) override;
 
         virtual int GetHashCode() override;
 
-    };
-
-    public ref class FloodRenderDevice
-    {
-    public:
         static Flood::RenderDevice^ GetRenderDevice();
+
     };
 }

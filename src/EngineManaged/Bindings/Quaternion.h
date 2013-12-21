@@ -12,10 +12,13 @@
 
 namespace Flood
 {
-    value struct EulerAngles;
     value struct Quaternion;
     value struct Vector3;
+    value struct EulerAngles;
+}
 
+namespace Flood
+{
     public value struct Quaternion
     {
     public:

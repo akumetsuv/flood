@@ -53,7 +53,7 @@ Flood::Quaternion::Quaternion(Flood::EulerAngles angles)
     _marshal0.x = angles.X;
     _marshal0.y = angles.Y;
     _marshal0.z = angles.Z;
-    ::Quaternion _native(_marshal0);
+    ::Quaternion _native(&_marshal0);
     this->X = _native.x;
     this->Y = _native.y;
     this->Z = _native.z;

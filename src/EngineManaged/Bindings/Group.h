@@ -9,58 +9,36 @@
 
 #include "CppSharp.h"
 #include <Engine/Scene/Group.h>
-#include "Entity.h"
 
 namespace Flood
 {
-    ref class Component;
-    ref class Entity;
     ref class Group;
+    ref class Component;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Groups are nodes that have the special property of being able to be
     /// attached to each other. If you attach a node to another node, they will be
     /// in a hierarchical relationship and the parent node will influence the child
     /// node transformations.
     /// </summary>
-    public ref class Group : Flood::Entity
+    public ref class Group : ICppInstance
     {
     public:
+
+        property ::Group* NativePtr;
+        property System::IntPtr Instance
+        {
+            virtual System::IntPtr get();
+            virtual void set(System::IntPtr instance);
+        }
 
         Group(::Group* native);
         Group(System::IntPtr native);
         Group();
 
-        Group(System::String^ name);
-
-        property System::Collections::Generic::List<Flood::Entity^>^ Entities
-        {
-            System::Collections::Generic::List<Flood::Entity^>^ get();
-        }
-    private:
-        delegate void _EntityAddedDelegate(const ::EntityPtr& _0);
-        _EntityAddedDelegate^ _EntityAddedDelegateInstance;
-        void _EntityAddedRaise(const ::EntityPtr& _0);
-        System::Action<Flood::Entity^>^ _EntityAdded;
-    public:
-        event System::Action<Flood::Entity^>^ EntityAdded
-        {
-            void add(System::Action<Flood::Entity^>^ evt);
-            void remove(System::Action<Flood::Entity^>^ evt);
-            void raise(Flood::Entity^ _0);
-        }
-    private:
-        delegate void _EntityRemovedDelegate(const ::EntityPtr& _1);
-        _EntityRemovedDelegate^ _EntityRemovedDelegateInstance;
-        void _EntityRemovedRaise(const ::EntityPtr& _1);
-        System::Action<Flood::Entity^>^ _EntityRemoved;
-    public:
-        event System::Action<Flood::Entity^>^ EntityRemoved
-        {
-            void add(System::Action<Flood::Entity^>^ evt);
-            void remove(System::Action<Flood::Entity^>^ evt);
-            void raise(Flood::Entity^ _1);
-        }
     private:
         delegate void _EntityComponentAddedDelegate(const ::ComponentPtr& _2);
         _EntityComponentAddedDelegate^ _EntityComponentAddedDelegateInstance;
@@ -97,14 +75,6 @@ namespace Flood
             void remove(System::Action^ evt);
             void raise();
         }
-        void Add(Flood::Entity^ entity);
-
-        bool Remove(Flood::Entity^ entity);
-
-        Flood::Entity^ FindEntity(System::String^ name);
-
-        virtual void Update(float delta) override;
-
         virtual bool Equals(System::Object^ object) override;
 
         virtual int GetHashCode() override;

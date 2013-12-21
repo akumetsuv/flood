@@ -13,16 +13,19 @@
 
 namespace Flood
 {
-    enum struct DebugDrawFlags : unsigned char;
-    ref class DebugDrawer;
-    ref class GeometryBuffer;
     ref class RenderBatch;
     value struct BoundingBox;
     value struct Frustum;
+    ref class DebugDrawer;
+    value struct Color;
     value struct Ray;
     value struct Vector3;
+    ref class GeometryBuffer;
+    enum struct DebugDrawFlags : unsigned char;
+}
 
-    [System::Flags]
+namespace Flood
+{
     public enum struct DebugDrawFlags : unsigned char
     {
         Selected = 1
@@ -74,14 +77,7 @@ namespace Flood
             Flood::RenderBatch^ get();
             void set(Flood::RenderBatch^);
         }
-        property System::Collections::Generic::List<Flood::RenderBatch^>^ Renderables
-        {
-            System::Collections::Generic::List<Flood::RenderBatch^>^ get();
-            void set(System::Collections::Generic::List<Flood::RenderBatch^>^);
-        }
         void DrawBox(Flood::BoundingBox box);
-
-        void DrawRay(Flood::Ray ray, float length);
 
         void DrawFrustum(Flood::Frustum frustum);
 

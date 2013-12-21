@@ -13,16 +13,17 @@
 
 namespace Flood
 {
+    value struct VertexElementP;
     enum struct VertexAttribute : unsigned char;
     enum struct VertexDataType : unsigned char;
-    ref class VertexBuffer;
-    ref class VertexDeclaration;
     value struct VertexElement;
-    value struct VertexElementP;
+    ref class VertexDeclaration;
+    ref class VertexBuffer;
+    ref class Buffer;
+}
 
-    /// <summary>
-    /// Attribute of a vertex element.
-    /// </summary>
+namespace Flood
+{
     public enum struct VertexAttribute : unsigned char
     {
         Position = 0,
@@ -102,11 +103,6 @@ namespace Flood
         property unsigned char VertexSize
         {
             unsigned char get();
-        }
-        property System::Collections::Generic::List<Flood::VertexElement>^ Decls
-        {
-            System::Collections::Generic::List<Flood::VertexElement>^ get();
-            void set(System::Collections::Generic::List<Flood::VertexElement>^);
         }
         void Add(Flood::VertexAttribute _0, int numComponents);
 

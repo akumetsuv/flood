@@ -16,11 +16,16 @@ namespace Flood
 {
     ref class Material;
     ref class RenderBatch;
-    ref class RenderBlock;
     ref class Texture;
     ref class Transform;
     value struct RenderState;
+    value struct Matrix4x3;
+    value struct Matrix4x4;
+    ref class RenderBlock;
+}
 
+namespace Flood
+{
     /// <summary>
     /// This contains all the rendering state information that is needed by the
     /// rendering device to properly render the associated.renderable. This should
@@ -57,11 +62,6 @@ namespace Flood
         RenderBlock(System::IntPtr native);
         RenderBlock();
 
-        property System::Collections::Generic::List<Flood::RenderState>^ Renderables
-        {
-            System::Collections::Generic::List<Flood::RenderState>^ get();
-            void set(System::Collections::Generic::List<Flood::RenderState>^);
-        }
         void AddState(Flood::RenderState renderState);
 
         virtual bool Equals(System::Object^ object) override;

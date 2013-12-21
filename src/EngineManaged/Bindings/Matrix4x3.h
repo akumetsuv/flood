@@ -12,11 +12,14 @@
 
 namespace Flood
 {
-    value struct EulerAngles;
     value struct Matrix4x3;
-    value struct Quaternion;
     value struct Vector3;
+    value struct EulerAngles;
+    value struct Quaternion;
+}
 
+namespace Flood
+{
     /// <summary>
     /// Implements a 4x3 transformation matrix. This class can represent any 3D
     /// affine transformation, like scaling, translation, rotation, shearing, etc.

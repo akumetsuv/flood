@@ -29,13 +29,13 @@ Allocator* GetResourcesAllocator() { return gs_ResourcesAllocator; }
 
 void ResourcesInitialize()
 {
-	gs_ResourcesAllocator = AllocatorCreateHeap( AllocatorGetHeap() );
-	AllocatorSetGroup(gs_ResourcesAllocator, "Resources");
+    gs_ResourcesAllocator = AllocatorCreateHeap( AllocatorGetHeap() );
+    AllocatorSetGroup(gs_ResourcesAllocator, "Resources");
 }
 
 void ResourcesDeinitialize()
 {
-	AllocatorDestroy(gs_ResourcesAllocator);
+    AllocatorDestroy(gs_ResourcesAllocator);
 }
 
 //-----------------------------------//
@@ -44,10 +44,10 @@ static HandleManager* gs_ResourceHandleManager = nullptr;
 
 ReferenceCounted* ResourceHandleFind(HandleId id)
 {
-	if( !gs_ResourceHandleManager ) return nullptr;
+    if( !gs_ResourceHandleManager ) return nullptr;
 
-	Resource* res = (Resource*) HandleFind(gs_ResourceHandleManager, id);
-	return res;
+    Resource* res = (Resource*) HandleFind(gs_ResourceHandleManager, id);
+    return res;
 }
 
 static const char* GetResourceGroupString(ResourceGroup group)
@@ -72,275 +72,275 @@ static const char* GetResourceGroupString(ResourceGroup group)
 
 ResourceHandle ResourceHandleCreate(Resource* res)
 {
-	if( !gs_ResourceHandleManager ) return HandleInvalid;
-	
-	HandleId handle = HandleCreate(gs_ResourceHandleManager, res);
+    if( !gs_ResourceHandleManager ) return HandleInvalid;
+    
+    HandleId handle = HandleCreate(gs_ResourceHandleManager, res);
     LogDebug("ResourceHandleCreate: %s %lu %s",
         GetResourceGroupString(res->getResourceGroup()), handle,
-        res->getPath().c_str());
-	
-	return handle;
+        res->getPath().CString());
+    
+    return handle;
 }
 
 static bool gs_RemoveResource = true;
 
 void ResourceHandleDestroy(HandleId id)
 {
-	Resource* resource = (Resource*) ResourceHandleFind(id);
+    Resource* resource = (Resource*) ResourceHandleFind(id);
 
-	if( gs_RemoveResource )
-		gs_ResourcesManager->removeResource(resource);
-	
-	LogDebug("ResourceHandleDestroy: %lu", id);
-	HandleDestroy(gs_ResourceHandleManager, id);
+    if( gs_RemoveResource )
+        gs_ResourcesManager->removeResource(resource);
+    
+    LogDebug("ResourceHandleDestroy: %lu", id);
+    HandleDestroy(gs_ResourceHandleManager, id);
 }
 
 static HandleId ResourceHandleFind(const char* s)
 {
-	if( !gs_ResourcesManager ) return HandleInvalid;
-	return gs_ResourcesManager->loadResource(s).getId();
+    if( !gs_ResourcesManager ) return HandleInvalid;
+    return gs_ResourcesManager->loadResource(s).getId();
 }
 
 static void ResourceHandleSerialize(
-	ReflectionContext* context, ReflectionWalkType wt )
+    ReflectionContext* context, ReflectionWalkType wt )
 {
-	Serializer* serializer = (Serializer*) context->userData;
+    Serializer* serializer = (Serializer*) context->userData;
 
-	Resource* resource = (Resource*) context->object;
-	
-	context->valueContext.s = &resource->path;
-	context->primitive = &PrimitiveGetBuiltins().p_string;
-	context->walkPrimitive(context, wt);
+    Resource* resource = (Resource*) context->object;
+    
+    context->valueContext.us = &resource->path;
+    context->primitive = &PrimitiveGetBuiltins().p_utf8string;
+    context->walkPrimitive(context, wt);
 }
 
 //-----------------------------------//
 
 ResourceEvent::ResourceEvent()
-	: resource(nullptr)
-	, oldResource(nullptr)
+    : resource(nullptr)
+    , oldResource(nullptr)
 {
 }
 
 //-----------------------------------//
 
 ResourceManager::ResourceManager()
-	: taskPool(nullptr)
-	, archive(nullptr)
-	, handleManager(nullptr)
-	, numResourcesQueuedLoad(0)
-	, asynchronousLoading(true)
+    : taskPool(nullptr)
+    , archive(nullptr)
+    , handleManager(nullptr)
+    , numResourcesQueuedLoad(0)
+    , asynchronousLoading(true)
 {
-	handleManager = HandleCreateManager( GetResourcesAllocator() );
+    handleManager = HandleCreateManager( GetResourcesAllocator() );
 
-	if( !gs_ResourcesManager )
-		gs_ResourcesManager = this;
+    if( !gs_ResourcesManager )
+        gs_ResourcesManager = this;
 
-	if( !gs_ResourceHandleManager )
-		gs_ResourceHandleManager = handleManager;
+    if( !gs_ResourceHandleManager )
+        gs_ResourceHandleManager = handleManager;
 
-	ReflectionHandleContext context;
-	context.type = ReflectionGetType(Resource);
-	context.handles = gs_ResourceHandleManager;
-	context.serialize = ResourceHandleSerialize;
-	context.deserialize = ResourceHandleFind;
-	
-	ReflectionHandleContextMap contextMap;
-	ReflectionSetHandleContext(&contextMap, context);
+    ReflectionHandleContext context;
+    context.type = ReflectionGetType(Resource);
+    context.handles = gs_ResourceHandleManager;
+    context.serialize = ResourceHandleSerialize;
+    context.deserialize = ResourceHandleFind;
+    
+    ReflectionHandleContextMap contextMap;
+    ReflectionSetHandleContext(&contextMap, context);
 
-	resourceFinishLoadMutex = Allocate(GetResourcesAllocator(), Mutex);
-	resourceFinishLoad = Allocate(GetResourcesAllocator(), Condition);
+    resourceFinishLoadMutex = Allocate(GetResourcesAllocator(), Mutex);
+    resourceFinishLoad = Allocate(GetResourcesAllocator(), Condition);
 }
 
 //-----------------------------------//
 
 ResourceManager::~ResourceManager()
 {
-	destroyHandles();
-	resourceLoaders.clear();
+    destroyHandles();
+    resourceLoaders.Clear();
 
-	Deallocate(resourceFinishLoad);
-	Deallocate(resourceFinishLoadMutex);
+    Deallocate(resourceFinishLoad);
+    Deallocate(resourceFinishLoadMutex);
 }
 
 //-----------------------------------//
 
 void ResourceManager::destroyHandles()
 {
-	for( auto it = resources.begin(); it != resources.end(); ++it )
-	{
-		ResourceHandle& handle = it->second;
-		Resource* res = handle.Resolve();
-		
-		LogDebug("Resource %s (refs: %d)", res->getPath().c_str(),
-			res->references.read());
-	}
+    for( auto it = resources.Begin(); it != resources.End(); ++it )
+    {
+        ResourceHandle& handle = it->second;
+        Resource* res = handle.Resolve();
+        
+        LogDebug("Resource %s (refs: %d)", res->getPath().CString(),
+            res->references.read());
+    }
 
-	gs_RemoveResource = false;
-	resources.clear();
-	
-	HandleDestroyManager(handleManager);
-	handleManager = nullptr;
+    gs_RemoveResource = false;
+    resources.Clear();
+    
+    HandleDestroyManager(handleManager);
+    handleManager = nullptr;
 }
 
 //-----------------------------------//
 
-ResourceHandle ResourceManager::getResource(const String& path)
+ResourceHandle ResourceManager::getResource(const Path& path)
 {
-	Path name = PathGetFile(path);
+    Path name = PathGetFile(path);
 
-	if( resources.find(name) == resources.end() )
-		return ResourceHandle(HandleInvalid);
+    if( resources.Find(name) == resources.End() )
+        return ResourceHandle(HandleInvalid);
 
-	return resources[name];
+    return resources[name];
 }
 
 //-----------------------------------//
 
-ResourceHandle ResourceManager::loadResource(const String& path)
+ResourceHandle ResourceManager::loadResource(const Path& path)
 {
-	Path name = PathGetFile(path);
+    Path name = PathGetFile(path);
 
-	ResourceLoadOptions options;
-	options.name = name;
-	options.asynchronousLoad = asynchronousLoading;
-	
-	return loadResource(options);
+    ResourceLoadOptions options;
+    options.name = name;
+    options.asynchronousLoad = asynchronousLoading;
+    
+    return loadResource(options);
 }
 
 //-----------------------------------//
 
 ResourceHandle ResourceManager::loadResource(ResourceLoadOptions& options)
 {
-	if( !archive ) return ResourceHandle(HandleInvalid);
+    if( !archive ) return ResourceHandle(HandleInvalid);
 
-	Path fileExt = PathGetFileExtension(options.name);
-	
-	// If the file has no extension, search for one with the same
-	// name but with known resource loadable file extensions.
+    Path fileExt = PathGetFileExtension(options.name);
+    
+    // If the file has no extension, search for one with the same
+    // name but with known resource loadable file extensions.
 
-	if(fileExt.empty() && !findResource(options))
-	{
-		LogError("Could not find matching file for '%s'", options.name.c_str());
-		return ResourceHandle(HandleInvalid);
-	}
+    if(fileExt.Empty() && !findResource(options))
+    {
+        LogError("Could not find matching file for '%s'", options.name.CString());
+        return ResourceHandle(HandleInvalid);
+    }
 
-	// Check if the resource is already loaded.
-	ResourceHandle handle = getResource(options.name);
-	if( handle ) return handle;
+    // Check if the resource is already loaded.
+    ResourceHandle handle = getResource(options.name);
+    if( handle ) return handle;
 
-	if( !validateResource(options.name) )
-		return ResourceHandle(HandleInvalid);
+    if( !validateResource(options.name) )
+        return ResourceHandle(HandleInvalid);
 
-	Resource* resource = prepareResource(options);
-	
-	if( !resource )
-		return ResourceHandle(HandleInvalid); 
+    Resource* resource = prepareResource(options);
+    
+    if( !resource )
+        return ResourceHandle(HandleInvalid); 
 
-	handle = ResourceHandleCreate(resource);
-	
-	if(handle == HandleInvalid)
-		return ResourceHandle(HandleInvalid);
+    handle = ResourceHandleCreate(resource);
+    
+    if(handle == HandleInvalid)
+        return ResourceHandle(HandleInvalid);
 
-	// Register the decoded resource in the map.
-	Path base = PathGetFile(options.name);
-	resources[base] = handle;
+    // Register the decoded resource in the map.
+    Path base = PathGetFile(options.name);
+    resources[base] = handle;
 
-	decodeResource(options);
+    decodeResource(options);
 
-	return handle;
+    return handle;
 }
 
 //-----------------------------------//
 
 bool ResourceManager::findResource(ResourceLoadOptions& options)
 {
-	Path& path = options.name;
-	
-	ResourceLoaderMap::const_iterator it;
-	for(it = resourceLoaders.begin(); it != resourceLoaders.end(); it++)
-	{
-		const String& ext = it->first;
-		const ResourceLoader* loader = it->second.get();
+    Path& path = options.name;
+    
+    ResourceLoaderMap::ConstIterator it;
+    for(it = resourceLoaders.Begin(); it != resourceLoaders.End(); it++)
+    {
+        const String& ext = it->first;
+        const ResourceLoader* loader = it->second.get();
 
-		if( loader->getResourceGroup() != options.group )
-			continue;
+        if( loader->getResourceGroup() != options.group )
+            continue;
 
-		Path newPath = StringFormat("%s.%s", path.c_str(), ext.c_str());
+        Path newPath = StringFormat("%s.%s", path.CString(), ext.CString());
 
-		if (archive->existsFile(newPath))
-		{
-			path = PathNormalize(newPath);
-			return true;
-		}
-	}
+        if (archive->existsFile(newPath))
+        {
+            path = PathNormalize(newPath);
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 //-----------------------------------//
 
 bool ResourceManager::validateResource( const Path& path )
 {
-	if( path.empty() ) return false;
-	
-	const Path& extension = PathGetFileExtension(path);
-	
-	if( extension.empty() )
-	{
-		LogWarn( "Resource '%s' has an invalid extension", path.c_str() );
-		return false;
-	}
+    if( path.Empty() ) return false;
+    
+    const Path& extension = PathGetFileExtension(path);
+    
+    if( extension.Empty() )
+    {
+        LogWarn( "Resource '%s' has an invalid extension", path.CString() );
+        return false;
+    }
 
-	if( !findLoader(extension) )
-	{
-		LogWarn("No resource loader found for resource '%s'", path.c_str());
-		return false;
-	}
+    if( !findLoader(extension) )
+    {
+        LogWarn("No resource loader found for resource '%s'", path.CString());
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 //-----------------------------------//
 
 Resource* ResourceManager::prepareResource( ResourceLoadOptions& options )
 {
-	const Path& path = options.name;
+    const Path& path = options.name;
 
-	Stream* stream = archive->openFile(path, GetResourcesAllocator());
-	
-	if( !stream )
-	{
-		LogWarn("Resource was not found: '%s'", path.c_str());
-		return nullptr;
-	}
+    Stream* stream = archive->openFile(path, GetResourcesAllocator());
+    
+    if( !stream )
+    {
+        LogWarn("Resource was not found: '%s'", path.CString());
+        return nullptr;
+    }
 
-	const Path& file = PathGetFile(path);
+    const Path& file = PathGetFile(path);
 
-	// Get the available resource loader and prepare the resource.
-	ResourceLoader* loader = findLoader( PathGetFileExtension(file) );
+    // Get the available resource loader and prepare the resource.
+    ResourceLoader* loader = findLoader( PathGetFileExtension(file) );
 
-	if( !loader )
-	{
-		LogWarn("No resource loader found for resource '%s'", file.c_str());
-		return nullptr;
-	}
+    if( !loader )
+    {
+        LogWarn("No resource loader found for resource '%s'", file.CString());
+        return nullptr;
+    }
 
-	options.stream = stream;
+    options.stream = stream;
 
-	Resource* resource = loader->prepare(options);
-	
-	if( !resource )
-	{
-		LogError("Error preparing resource: '%s'", path.c_str());
-		return nullptr;
-	}
+    Resource* resource = loader->prepare(options);
+    
+    if( !resource )
+    {
+        LogError("Error preparing resource: '%s'", path.CString());
+        return nullptr;
+    }
 
-	resource->setStatus( ResourceStatus::Loading );
-	resource->setPath( file );
+    resource->setStatus( ResourceStatus::Loading );
+    resource->setPath( file );
 
-	options.resource = resource;
+    options.resource = resource;
 
-	return resource;
+    return resource;
 }
 
 //-----------------------------------//
@@ -349,283 +349,283 @@ void ResourceTaskRun(Task* task);
 
 void ResourceManager::decodeResource( ResourceLoadOptions& options )
 {
-	Task* task = Allocate(GetResourcesAllocator(), Task);
-	
-	ResourceLoadOptions* taskOptions = Allocate(GetResourcesAllocator(),
-		ResourceLoadOptions);
+    Task* task = Allocate(GetResourcesAllocator(), Task);
+    
+    ResourceLoadOptions* taskOptions = Allocate(GetResourcesAllocator(),
+        ResourceLoadOptions);
 
-	*taskOptions = options;
+    *taskOptions = options;
 
-	task->callback.Bind(ResourceTaskRun);
-	task->userdata = taskOptions;
+    task->callback.Bind(ResourceTaskRun);
+    task->userdata = taskOptions;
 
-	numResourcesQueuedLoad.increment();
+    numResourcesQueuedLoad.increment();
 
 #ifdef ENABLE_THREADED_LOADING
-	if( taskPool && asynchronousLoading && options.asynchronousLoad )
-	{
-		taskPool->add(task, options.isHighPriority);
-		return;
-	}
+    if( taskPool && asynchronousLoading && options.asynchronousLoad )
+    {
+        taskPool->add(task, options.isHighPriority);
+        return;
+    }
 #endif
 
-	task->run();
-	sendPendingEvents();
+    task->run();
+    sendPendingEvents();
 }
 
 //-----------------------------------//
 
 void ResourceManager::loadQueuedResources()
 {
-	resourceFinishLoadMutex->lock();
+    resourceFinishLoadMutex->lock();
 
-	while(numResourcesQueuedLoad.read() > 0 )
-	{
-		#pragma TODO("Use a sleep and notify the observers of progress")
-		resourceFinishLoad->wait(*resourceFinishLoadMutex);
-	}
+    while(numResourcesQueuedLoad.read() > 0 )
+    {
+        #pragma TODO("Use a sleep and notify the observers of progress")
+        resourceFinishLoad->wait(*resourceFinishLoadMutex);
+    }
 
-	resourceFinishLoadMutex->unlock();
+    resourceFinishLoadMutex->unlock();
 
-	assert(numResourcesQueuedLoad.read() == 0);
+    assert(numResourcesQueuedLoad.read() == 0);
 }
 
 //-----------------------------------//
 
 void ResourceManager::update()
 {
-	sendPendingEvents();
+    sendPendingEvents();
 
-	// Update the archive watches.
-	archive->monitor();
+    // Update the archive watches.
+    archive->monitor();
 
-	removeUnusedResources();
+    removeUnusedResources();
 }
 
 //-----------------------------------//
 
 void ResourceManager::sendPendingEvents()
 {
-	ResourceEvent event;
+    ResourceEvent event;
 
-	while( resourceEvents.try_pop_front(event) )
-	{
-		Resource* resource = event.resource;
-		Path base = PathGetFile(resource->path);
+    while( resourceEvents.try_pop_front(event) )
+    {
+        Resource* resource = event.resource;
+        Path base = PathGetFile(resource->path);
 
-		// Find the handle to the resource.
-		ResourceMap::iterator it = resources.find(base);
-		if( it == resources.end() ) continue;
+        // Find the handle to the resource.
+        ResourceMap::Iterator it = resources.Find(base);
+        if( it == resources.End() ) continue;
 
-		ResourceHandle handle = it->second;
-		assert( handle != HandleInvalid );
+        ResourceHandle handle = it->second;
+        assert( handle != HandleInvalid );
 
-		event.handle = handle;
-		onResourceLoaded( event );
-	}
+        event.handle = handle;
+        onResourceLoaded( event );
+    }
 }
 
 //-----------------------------------//
 
 void ResourceManager::removeUnusedResources()
 {
-	#pragma TODO("Finish the unused resource collecetor")
+    #pragma TODO("Finish the unused resource collecetor")
 
-	return;
+    return;
 
-	std::vector<String> resourcesToRemove;
+    Vector<String> resourcesToRemove;
 
-	// Search for unused resources.
-	ResourceMap::const_iterator it;
-	for( it = resources.begin(); it != resources.end(); it++ )
-	{
-		const ResourceHandle& resource = it->second;
+    // Search for unused resources.
+    ResourceMap::ConstIterator it;
+    for( it = resources.Begin(); it != resources.End(); it++ )
+    {
+        const ResourceHandle& resource = it->second;
 
-		if( resource.Resolve()->references.read() == 1 )
-			resourcesToRemove.push_back(it->first);
-	}
+        if( resource.Resolve()->references.read() == 1 )
+            resourcesToRemove.Push(it->first);
+    }
 
-	for( size_t i = 0; i < resourcesToRemove.size(); i++ )
-	{
-		const String& resource = resourcesToRemove[i];
-		removeResource(resource);
-	}
+    for( size_t i = 0; i < resourcesToRemove.Size(); i++ )
+    {
+        const String& resource = resourcesToRemove[i];
+        removeResource(resource);
+    }
 }
 
 //-----------------------------------//
 
 void ResourceManager::removeResource(Resource* resource)
 {
-	if( !resource ) return;
+    if( !resource ) return;
 
-	const String& path = resource->getPath();
-	removeResource(path);
+    const String& path = resource->getPath();
+    removeResource(path);
 }
 
 //-----------------------------------//
 
 void ResourceManager::removeResource(const String& path)
 {
-	ResourceMap::iterator it = resources.find(path);
-	
-	if( it == resources.end() )
-		return;
-	
-	// Send callback notifications.
-	ResourceEvent event;
-	event.handle = it->second;
+    ResourceMap::Iterator it = resources.Find(path);
+    
+    if( it == resources.End() )
+        return;
+    
+    // Send callback notifications.
+    ResourceEvent event;
+    event.handle = it->second;
 
-	onResourceRemoved( event );
+    onResourceRemoved( event );
 
-	LogInfo("Unloaded resource: %s", path.c_str());
-	resources.erase(it);
+    LogInfo("Unloaded resource: %s", path.CString());
+    resources.Erase(it);
 }
 
 //-----------------------------------//
 
 void ResourceManager::registerLoader(ResourceLoader* loader)
 {
-	if( !loader ) return;
+    if( !loader ) return;
 
-	Class* klass = loader->getType();
-	LogInfo( "Registering resource loader '%s'", klass->name );
+    Class* klass = loader->getType();
+    LogInfo( "Registering resource loader '%s'", klass->name );
 
-	const std::vector<String>& extensions = loader->getExtensions();
-	
-	for( size_t i = 0; i < extensions.size(); i++ )
-	{
-		const String& extension = extensions[i];
+    const Vector<String>& extensions = loader->getExtensions();
+    
+    for( size_t i = 0; i < extensions.Size(); i++ )
+    {
+        const String& extension = extensions[i];
 
-		if(resourceLoaders.find(extension) != resourceLoaders.end())
-		{
-			LogDebug("Extension '%s' already has a resource loader",
-				extension.c_str());
-			continue;
-		}
+        if(resourceLoaders.Find(extension) != resourceLoaders.End())
+        {
+            LogDebug("Extension '%s' already has a resource loader",
+                extension.CString());
+            continue;
+        }
 
-		resourceLoaders[extension] = loader;
-	}
+        resourceLoaders[extension] = loader;
+    }
 
-	// Send callback notifications.
-	onResourceLoaderRegistered( *loader );
+    // Send callback notifications.
+    onResourceLoaderRegistered( *loader );
 }
 
 //-----------------------------------//
 
 ResourceLoader* ResourceManager::findLoader(const String& ext)
 {
-	String extension = StringToLowerCase(ext);
+    String extension = ext.ToLower();
 
-	// Check if we have a resource loader for this extension.
-	if( resourceLoaders.find(extension) == resourceLoaders.end() )
-		return nullptr;
+    // Check if we have a resource loader for this extension.
+    if( resourceLoaders.Find(extension) == resourceLoaders.End() )
+        return nullptr;
 
-	const ResourceLoaderPtr& loader = resourceLoaders[extension];
-	return loader.get();
+    const ResourceLoaderPtr& loader = resourceLoaders[extension];
+    return loader.get();
 }
 
 //-----------------------------------//
 
 ResourceLoader* ResourceManager::findLoaderByClass(const Class* klass)
 {
-	for(auto it = resourceLoaders.begin(); it != resourceLoaders.end(); it++)
-	{
-		const ResourceLoaderPtr& loader = it->second;
-		Class* resourceClass = loader->getResourceClass();
-		
-		if(ClassInherits(resourceClass, klass))
-			return loader.get();
-	}
+    for(auto it = resourceLoaders.Begin(); it != resourceLoaders.End(); it++)
+    {
+        const ResourceLoaderPtr& loader = it->second;
+        Class* resourceClass = loader->getResourceClass();
+        
+        if(ClassInherits(resourceClass, klass))
+            return loader.get();
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
 //-----------------------------------//
 
 void ResourceManager::setupResourceLoaders(Class* klass)
 {
-	for( size_t i = 0; i < klass->childs.Size(); i++ )
-	{
-		Class* child = klass->childs[i];
+    for( size_t i = 0; i < klass->childs.Size(); i++ )
+    {
+        Class* child = klass->childs[i];
 
-		if( !child->childs.Empty() )
-			setupResourceLoaders(child);
-	
-		if( ClassIsAbstract(child ) ) continue;
+        if( !child->childs.Empty() )
+            setupResourceLoaders(child);
+    
+        if( ClassIsAbstract(child ) ) continue;
 
-		auto loader = (ResourceLoader*) ClassCreateInstance(
-			child, GetResourcesAllocator());
+        auto loader = (ResourceLoader*) ClassCreateInstance(
+            child, GetResourcesAllocator());
 
-		registerLoader( loader );
-	}
+        registerLoader( loader );
+    }
 }
 
 //-----------------------------------//
 
 void ResourceManager::setArchive(Archive* newArchive)
 {
-	if(archive == newArchive) return;
+    if(archive == newArchive) return;
 
-	if(archive)
-	{
-		// Disconnect from the watch events.
-		archive->watch.Disconnect(this, &ResourceManager::handleWatchResource);
-		archive = nullptr;
-	}
+    if(archive)
+    {
+        // Disconnect from the watch events.
+        archive->watch.Disconnect(this, &ResourceManager::handleWatchResource);
+        archive = nullptr;
+    }
 
-	if(newArchive)
-	{
-		archive = newArchive;
-		archive->watch.Connect(this, &ResourceManager::handleWatchResource);
-	}
+    if(newArchive)
+    {
+        archive = newArchive;
+        archive->watch.Connect(this, &ResourceManager::handleWatchResource);
+    }
 }
 
 //-----------------------------------//
 
 void ResourceManager::handleWatchResource(Archive*, const FileWatchEvent& evt)
 {
-	// Check if the filename maps to a known resource.
-	const Path& file = PathGetFile(evt.filename);
+    // Check if the filename maps to a known resource.
+    const Path& file = PathGetFile(evt.filename);
 
-	if( resources.find(file) == resources.end() )
-		return; // Resource is not known.
+    if( resources.Find(file) == resources.End() )
+        return; // Resource is not known.
 
-	// Reload the resource if it was modified.
-	if( evt.action != FileWatchEventKind::Modified )
-	{
-		#pragma TODO("Add rename support in live updating")
+    // Reload the resource if it was modified.
+    if( evt.action != FileWatchEventKind::Modified )
+    {
+        #pragma TODO("Add rename support in live updating")
 
-		LogDebug( "Resource was renamed - handle this" );
-		return;
-	}
+        LogDebug( "Resource was renamed - handle this" );
+        return;
+    }
 
-	// Register the decoded resource in the map.
-	LogInfo("Reloading resource '%s'", file.c_str());
+    // Register the decoded resource in the map.
+    LogInfo("Reloading resource '%s'", file.CString());
 
-	ResourceLoadOptions options;
-	options.sendLoadEvent = false;
-	options.name = evt.filename;
-	
-	Resource* resource = prepareResource(options);
-	decodeResource(options);
+    ResourceLoadOptions options;
+    options.sendLoadEvent = false;
+    options.name = evt.filename;
+    
+    Resource* resource = prepareResource(options);
+    decodeResource(options);
 
-	const ResourceHandle& handle = resources[file];
-	Resource* oldResource = handle.Resolve();
+    const ResourceHandle& handle = resources[file];
+    Resource* oldResource = handle.Resolve();
 
-	HandleId handleId = handle.getId();
+    HandleId handleId = handle.getId();
 
-	ResourceEvent event;
-	event.resource = resource;
-	event.oldResource = oldResource;
-	event.handle = handle;
+    ResourceEvent event;
+    event.resource = resource;
+    event.oldResource = oldResource;
+    event.handle = handle;
 
-	// Switch the resource but mantain the same handle.
-	resource->addReference();
-	handleManager->handles[handleId] = resource;
+    // Switch the resource but mantain the same handle.
+    resource->addReference();
+    handleManager->handles[handleId] = resource;
 
-	onResourceReloaded(event);
+    onResourceReloaded(event);
 
-	event.handle.id = HandleInvalid;
+    event.handle.id = HandleInvalid;
 }
 
 //-----------------------------------//

@@ -14,17 +14,18 @@
 
 namespace Flood
 {
+    ref class Image;
+    ref class Resource;
     enum struct PixelFormat;
     enum struct ResourceGroup;
-    ref class Allocator;
-    ref class ImageWriter;
-    ref class Stream;
     value struct Color;
     value struct Vector2i;
+    ref class ImageWriter;
+    ref class Stream;
+}
 
-    /// <summary>
-    /// Possible pixel formats for an image.
-    /// </summary>
+namespace Flood
+{
     public enum struct PixelFormat
     {
         R8G8B8A8 = 0,
@@ -70,14 +71,6 @@ namespace Flood
             Flood::PixelFormat get();
             void set(Flood::PixelFormat);
         }
-        property System::Collections::Generic::List<unsigned char>^ Buffer
-        {
-            System::Collections::Generic::List<unsigned char>^ get();
-        }
-        property System::Collections::Generic::List<unsigned char>^ Buffer1
-        {
-            System::Collections::Generic::List<unsigned char>^ get();
-        }
         property unsigned int PixelSize
         {
             unsigned int get();
@@ -98,8 +91,6 @@ namespace Flood
         {
             unsigned int get();
         }
-        void SetBuffer(System::Collections::Generic::List<unsigned char>^ v);
-
         bool IsCompressed();
 
         void SetBuffer(System::IntPtr data);
@@ -118,8 +109,6 @@ namespace Flood
 
         virtual int GetHashCode() override;
 
-        static Flood::ResourceHandle<Flood::Image^> Create(Flood::Allocator^ _0, unsigned int width, unsigned int height, Flood::PixelFormat _1);
-
     };
 
     public ref class ImageWriter : ICppInstance
@@ -136,8 +125,6 @@ namespace Flood
         ImageWriter(::ImageWriter* native);
         ImageWriter(System::IntPtr native);
         ImageWriter();
-
-        void Save(Flood::Image^ image, Flood::Stream^ stream);
 
         void Save(Flood::Image^ image, System::String^ filePath);
 

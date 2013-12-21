@@ -7,6 +7,7 @@
 
 #include "UniformBuffer.h"
 #include "Color.h"
+#include "HashMap.h"
 #include "Matrix4x3.h"
 #include "Matrix4x4.h"
 #include "Vector.h"
@@ -73,43 +74,6 @@ void Flood::UniformBuffer::SetUniform(System::String^ slot, float value)
     ((::UniformBuffer*)NativePtr)->setUniform(arg0, value);
 }
 
-void Flood::UniformBuffer::SetUniform(System::String^ slot, System::Collections::Generic::List<Flood::Vector3>^ vec)
-{
-    auto _arg0 = clix::marshalString<clix::E_UTF8>(slot);
-    auto arg0 = _arg0.c_str();
-    auto _tmpvec = std::vector<::Vector3>();
-    for each(Flood::Vector3 _element in vec)
-    {
-        auto _marshal0 = ::Vector3();
-        _marshal0.x = _element.X;
-        _marshal0.y = _element.Y;
-        _marshal0.z = _element.Z;
-        auto _marshalElement = _marshal0;
-        _tmpvec.push_back(_marshalElement);
-    }
-    auto arg1 = _tmpvec;
-    ((::UniformBuffer*)NativePtr)->setUniform(arg0, arg1);
-}
-
-void Flood::UniformBuffer::SetUniform(System::String^ slot, System::Collections::Generic::List<Flood::Color>^ vec)
-{
-    auto _arg0 = clix::marshalString<clix::E_UTF8>(slot);
-    auto arg0 = _arg0.c_str();
-    auto _tmpvec = std::vector<::Color>();
-    for each(Flood::Color _element in vec)
-    {
-        auto _marshal0 = ::Color();
-        _marshal0.r = (::byte)(::uint8)(::uint8_t)_element.R;
-        _marshal0.g = (::byte)(::uint8)(::uint8_t)_element.G;
-        _marshal0.b = (::byte)(::uint8)(::uint8_t)_element.B;
-        _marshal0.a = (::byte)(::uint8)(::uint8_t)_element.A;
-        auto _marshalElement = _marshal0;
-        _tmpvec.push_back(_marshalElement);
-    }
-    auto arg1 = _tmpvec;
-    ((::UniformBuffer*)NativePtr)->setUniform(arg0, arg1);
-}
-
 void Flood::UniformBuffer::SetUniform(System::String^ slot, Flood::Vector3 vec)
 {
     auto _arg0 = clix::marshalString<clix::E_UTF8>(slot);
@@ -165,37 +129,6 @@ void Flood::UniformBuffer::SetUniform(System::String^ slot, Flood::Matrix4x4 _0)
     _marshal1.tz = _0.Tz;
     _marshal1.tw = _0.Tw;
     auto arg1 = _marshal1;
-    ((::UniformBuffer*)NativePtr)->setUniform(arg0, arg1);
-}
-
-void Flood::UniformBuffer::SetUniform(System::String^ slot, System::Collections::Generic::List<Flood::Matrix4x4>^ vec)
-{
-    auto _arg0 = clix::marshalString<clix::E_UTF8>(slot);
-    auto arg0 = _arg0.c_str();
-    auto _tmpvec = std::vector<::Matrix4x4>();
-    for each(Flood::Matrix4x4 _element in vec)
-    {
-        auto _marshal0 = ::Matrix4x4();
-        _marshal0.m11 = _element.M11;
-        _marshal0.m12 = _element.M12;
-        _marshal0.m13 = _element.M13;
-        _marshal0.m14 = _element.M14;
-        _marshal0.m21 = _element.M21;
-        _marshal0.m22 = _element.M22;
-        _marshal0.m23 = _element.M23;
-        _marshal0.m24 = _element.M24;
-        _marshal0.m31 = _element.M31;
-        _marshal0.m32 = _element.M32;
-        _marshal0.m33 = _element.M33;
-        _marshal0.m34 = _element.M34;
-        _marshal0.tx = _element.Tx;
-        _marshal0.ty = _element.Ty;
-        _marshal0.tz = _element.Tz;
-        _marshal0.tw = _element.Tw;
-        auto _marshalElement = _marshal0;
-        _tmpvec.push_back(_marshalElement);
-    }
-    auto arg1 = _tmpvec;
     ((::UniformBuffer*)NativePtr)->setUniform(arg0, arg1);
 }
 

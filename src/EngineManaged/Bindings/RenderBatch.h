@@ -14,20 +14,19 @@
 
 namespace Flood
 {
-    enum struct PrimitiveRasterMode : unsigned char;
-    enum struct PrimitiveType : unsigned char;
-    enum struct RenderLayer : unsigned char;
-    ref class Allocator;
-    ref class GeometryBuffer;
-    ref class RenderBatch;
-    ref class RenderView;
-    ref class UniformBuffer;
     value struct RenderBatchRange;
+    ref class RenderView;
     value struct RenderState;
+    ref class RenderBatch;
+    enum struct RenderLayer : unsigned char;
+    enum struct PrimitiveType : unsigned char;
+    enum struct PrimitiveRasterMode : unsigned char;
+    ref class UniformBuffer;
+    ref class Material;
+}
 
-    /// <summary>
-    /// Type of primitive of the RenderBatch.
-    /// </summary>
+namespace Flood
+{
     public enum struct PrimitiveType : unsigned char
     {
         Points = 0,
@@ -42,9 +41,6 @@ namespace Flood
         Polygon = 9
     };
 
-    /// <summary>
-    /// Type of rendering mode of the RenderBatch.
-    /// </summary>
     public enum struct PrimitiveRasterMode : unsigned char
     {
         Solid = 0,
@@ -52,11 +48,6 @@ namespace Flood
         Point = 2
     };
 
-    /// <summary>
-    /// Use these different kinds of render groups to signal to the renderer how
-    /// you want your RenderBatchs to be sorted by the render device. Lower numbers
-    /// render before higher numbers.
-    /// </summary>
     public enum struct RenderLayer : unsigned char
     {
         Normal = 0,
@@ -103,11 +94,6 @@ namespace Flood
             int get();
             void set(int);
         }
-        property Flood::GeometryBuffer^ GeometryBuffer
-        {
-            Flood::GeometryBuffer^ get();
-            void set(Flood::GeometryBuffer^);
-        }
         property Flood::UniformBuffer^ UniformBuffer
         {
             Flood::UniformBuffer^ get();
@@ -153,11 +139,6 @@ namespace Flood
             Flood::PrimitiveRasterMode get();
             void set(Flood::PrimitiveRasterMode);
         }
-        property Flood::GeometryBuffer^ Gb
-        {
-            Flood::GeometryBuffer^ get();
-            void set(Flood::GeometryBuffer^);
-        }
         property Flood::UniformBuffer^ Ub
         {
             Flood::UniformBuffer^ get();
@@ -172,11 +153,5 @@ namespace Flood
 
         virtual int GetHashCode() override;
 
-    };
-
-    public ref class FloodRenderBatch
-    {
-    public:
-        static Flood::RenderBatch^ RenderBatchCreate(Flood::Allocator^ _0);
     };
 }

@@ -8,6 +8,7 @@
 #include "RenderBuffer.h"
 #include "Image.h"
 #include "Texture.h"
+#include "Vector.h"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -49,19 +50,6 @@ void Flood::RenderBuffer::Update()
     ((::RenderBuffer*)NativePtr)->update();
 }
 
-void Flood::RenderBuffer::Read(char attachment, System::Collections::Generic::List<unsigned char>^ data)
-{
-    auto arg0 = (::int8)(::int8_t)attachment;
-    auto _tmpdata = std::vector<::uint8>();
-    for each(unsigned char _element in data)
-    {
-        auto _marshalElement = (::uint8)(::uint8_t)_element;
-        _tmpdata.push_back(_marshalElement);
-    }
-    auto arg1 = _tmpdata;
-    ((::RenderBuffer*)NativePtr)->read(arg0, arg1);
-}
-
 Flood::Image^ Flood::RenderBuffer::ReadImage(char attachment)
 {
     auto arg0 = (::int8)(::int8_t)attachment;
@@ -89,6 +77,11 @@ void Flood::RenderBuffer::AttachRenderTexture(Flood::Texture^ tex)
     ((::RenderBuffer*)NativePtr)->attachRenderTexture(arg0);
 }
 
+Flood::RenderBuffer::RenderBuffer(Flood::Settings settings)
+    : Flood::RenderTarget((::RenderTarget*)nullptr)
+{
+}
+
 bool Flood::RenderBuffer::Equals(System::Object^ object)
 {
     if (!object) return false;
@@ -107,5 +100,18 @@ Flood::Settings Flood::RenderBuffer::Settings::get()
 {
     auto &__ret = ((::RenderBuffer*)NativePtr)->getSettings();
     return Flood::Settings((::Settings*)&__ret);
+}
+
+Flood::Settings Flood::RenderBuffer::Settings1::get()
+{
+    return Flood::Settings((::Settings*)&((::RenderBuffer*)NativePtr)->settings);
+}
+
+void Flood::RenderBuffer::Settings1::set(Flood::Settings value)
+{
+    auto _marshal0 = ::Settings();
+    _marshal0.width = (::uint16)(::uint16_t)value.Width;
+    _marshal0.height = (::uint16)(::uint16_t)value.Height;
+    ((::RenderBuffer*)NativePtr)->settings = _marshal0;
 }
 

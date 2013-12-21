@@ -27,29 +27,10 @@ Flood::Window^ Flood::WindowManager::CreateWindow(Flood::WindowSettings settings
     auto _marshal0 = ::WindowSettings();
     _marshal0.width = (::uint16)(::uint16_t)settings.Width;
     _marshal0.height = (::uint16)(::uint16_t)settings.Height;
-    _marshal0.title = clix::marshalString<clix::E_UTF8>(settings.Title);
     _marshal0.handle = (void*)settings.Handle.ToPointer();
     _marshal0.styles = (::WindowStyles)settings.Styles;
     auto arg0 = _marshal0;
     auto __ret = ((::WindowManager*)NativePtr)->createWindow(arg0);
-    if (__ret == nullptr) return nullptr;
-    return gcnew Flood::Window((::Window*)__ret);
-}
-
-Flood::Window^ Flood::WindowManager::OpenFileDialog(System::String^ wildcard, Flood::FileDialogFlags flags)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(wildcard);
-    auto arg1 = (::FileDialogFlags)flags;
-    auto __ret = ((::WindowManager*)NativePtr)->openFileDialog(arg0, arg1);
-    if (__ret == nullptr) return nullptr;
-    return gcnew Flood::Window((::Window*)__ret);
-}
-
-Flood::Window^ Flood::WindowManager::OpenDirectoryDialog(System::String^ wildcard, Flood::DirectoryDialogFlags flags)
-{
-    auto arg0 = clix::marshalString<clix::E_UTF8>(wildcard);
-    auto arg1 = (::DirectoryDialogFlags)flags;
-    auto __ret = ((::WindowManager*)NativePtr)->openDirectoryDialog(arg0, arg1);
     if (__ret == nullptr) return nullptr;
     return gcnew Flood::Window((::Window*)__ret);
 }

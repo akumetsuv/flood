@@ -13,16 +13,16 @@
 
 namespace Flood
 {
-    enum struct RenderBufferType : unsigned char;
-    ref class Image;
     ref class RenderBuffer;
+    ref class RenderTarget;
+    value struct Settings;
+    ref class Image;
+    enum struct RenderBufferType : unsigned char;
     ref class Texture;
+}
 
-    /// <summary>
-    /// Render buffers need to have renderable attachments. These attachments can
-    /// be of different types depending on your needs. This enum works like a
-    /// bitmask, so you can combine more than one type when attaching.
-    /// </summary>
+namespace Flood
+{
     [System::Flags]
     public enum struct RenderBufferType : unsigned char
     {
@@ -47,9 +47,16 @@ namespace Flood
 
         RenderBuffer(::RenderBuffer* native);
         RenderBuffer(System::IntPtr native);
+        RenderBuffer(Flood::Settings settings);
+
         property Flood::Settings Settings
         {
             Flood::Settings get();
+        }
+        property Flood::Settings Settings1
+        {
+            Flood::Settings get();
+            void set(Flood::Settings);
         }
         virtual void MakeCurrent() override;
 
@@ -60,8 +67,6 @@ namespace Flood
         virtual bool Check();
 
         virtual void Update() override;
-
-        virtual void Read(char attachment, System::Collections::Generic::List<unsigned char>^ data);
 
         virtual Flood::Image^ ReadImage(char attachment);
 

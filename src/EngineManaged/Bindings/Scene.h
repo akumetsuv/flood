@@ -15,16 +15,20 @@
 
 namespace Flood
 {
-    enum struct ResourceGroup;
-    ref class Entity;
-    ref class Geometry;
-    ref class Group;
     ref class RayQueryResult;
+    ref class Geometry;
     ref class RayTriangleQueryResult;
     ref class RenderBatch;
+    value struct Vector3;
+    ref class Scene;
+    ref class Resource;
+    ref class Group;
+    enum struct ResourceGroup;
     value struct Frustum;
-    value struct Ray;
+}
 
+namespace Flood
+{
     public ref class RayQueryResult : ICppInstance
     {
     public:
@@ -40,11 +44,6 @@ namespace Flood
         RayQueryResult(System::IntPtr native);
         RayQueryResult();
 
-        property Flood::Entity^ Entity
-        {
-            Flood::Entity^ get();
-            void set(Flood::Entity^);
-        }
         property float Distance
         {
             float get();
@@ -117,18 +116,9 @@ namespace Flood
         property Flood::Group^ Entities
         {
             Flood::Group^ get();
+            void set(Flood::Group^);
         }
         void Update(float delta);
-
-        bool DoRayBoxQuery(Flood::Ray ray, Flood::RayQueryResult^ res);
-
-        bool DoRayBoxQuery(Flood::Ray ray, System::Collections::Generic::List<Flood::RayQueryResult^>^ list, bool all);
-
-        bool DoRayVolumeQuery(Flood::Frustum volume, System::Collections::Generic::List<Flood::RayQueryResult^>^ list, bool all);
-
-        bool DoRayTriangleQuery(Flood::Ray ray, Flood::RayTriangleQueryResult^ res);
-
-        bool DoRayTriangleQuery(Flood::Ray ray, Flood::RayTriangleQueryResult^ res, Flood::Entity^ _0);
 
         virtual bool Equals(System::Object^ object) override;
 

@@ -12,11 +12,13 @@
 
 namespace Flood
 {
-    enum struct LogLevel;
-    ref class Allocator;
-    ref class Log;
     value struct LogEntry;
+    enum struct LogLevel;
+    ref class Log;
+}
 
+namespace Flood
+{
     public enum struct LogLevel
     {
         Info = 0,
@@ -26,7 +28,7 @@ namespace Flood
         Assert = 4
     };
 
-    public delegate void LogFunction(Flood::LogEntry _2);
+    delegate void LogFunction(Flood::LogEntry _2);
 
     public value struct LogEntry
     {
@@ -35,7 +37,6 @@ namespace Flood
         LogEntry(::LogEntry* native);
         LogEntry(System::IntPtr native);
         float Time;
-        System::String^ Message;
         Flood::LogLevel Level;
     };
 

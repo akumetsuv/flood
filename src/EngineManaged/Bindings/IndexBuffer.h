@@ -13,9 +13,12 @@
 
 namespace Flood
 {
-    ref class GeometryBuffer;
     ref class IndexBuffer;
+    ref class Buffer;
+}
 
+namespace Flood
+{
     public ref class IndexBuffer : Flood::Buffer
     {
     public:
