@@ -34,9 +34,9 @@ NAMESPACE_CORE_BEGIN
 
 enum class ThreadPriority
 {
-	Low,
-	Normal,
-	High
+    Low,
+    Normal,
+    High
 };
 
 class Thread;
@@ -51,50 +51,50 @@ class API_CORE Thread
 {
 public:
 
-	Thread();
-	~Thread();
+    Thread();
+    ~Thread();
 
-	/**
-	 * Start thread execution.
-	 * @param function function to run in the thread
-	 * @param data function arguments
-	 */
-	bool start(ThreadFunction function, void* data);
+    /**
+     * Start thread execution.
+     * @param function function to run in the thread
+     * @param data function arguments
+     */
+    bool start(ThreadFunction function, void* data);
 
-	/**
-	 * Blocks the calling thread until a thread terminates.
-	 */
-	bool join();
+    /**
+     * Blocks the calling thread until a thread terminates.
+     */
+    bool join();
 
-	/**
-	 * Pause thread execution.
-	 */
-	bool pause();
+    /**
+     * Pause thread execution.
+     */
+    bool pause();
 
-	/**
-	 * Resume thread execution.
-	 */
-	bool resume();
+    /**
+     * Resume thread execution.
+     */
+    bool resume();
 
-	/**
-	 * Set thread priority.
-	 * @param priority thread priority
-	 */
-	bool setPriority(ThreadPriority priority);
+    /**
+     * Set thread priority.
+     * @param priority thread priority
+     */
+    bool setPriority(ThreadPriority priority);
 
-	/**
-	 * Set thread name.
-	 * @param name thread name
-	 */
+    /**
+     * Set thread name.
+     * @param name thread name
+     */
 
-	void setName(const char* name);
+    void setName(const char* name);
 
 
-	void* handle; //!< thread handle 
-	volatile bool isRunning; //!< whether thread is running
-	ThreadPriority priority; //!< thread priority
-	ThreadFunction function; //!< function for the thread to run
-	void* userdata; //!< function arguments
+    void* handle; //!< thread handle 
+    volatile bool isRunning; //!< whether thread is running
+    ThreadPriority priority; //!< thread priority
+    ThreadFunction function; //!< function for the thread to run
+    void* userdata; //!< function arguments
 };
 
 //-----------------------------------//
@@ -106,28 +106,28 @@ public:
  */
 struct API_CORE Mutex
 {
-	Mutex();
-	~Mutex();
+    Mutex();
+    ~Mutex();
 
-	/**
-	 * Init mutex.
-	 */
-	void init();
+    /**
+     * Init mutex.
+     */
+    void init();
 
-	/**
-	 * Lock mutex.
-	 */
-	void lock();
+    /**
+     * Lock mutex.
+     */
+    void lock();
 
-	/**
-	 * Unlock mutex.
-	 */
-	void unlock();
+    /**
+     * Unlock mutex.
+     */
+    void unlock();
 
 #if defined(PLATFORM_WINDOWS)
-	CRITICAL_SECTION* handle; //!< mutex handle
+    CRITICAL_SECTION* handle; //!< mutex handle
 #else
-	pthreadmutex_t* handle; //!< mutex handle
+    pthreadmutex_t* handle; //!< mutex handle
 #endif
 };
 
@@ -143,41 +143,41 @@ struct API_CORE Mutex
  */
 struct API_CORE Condition
 {
-	Condition();
-	~Condition();
-	
-	/**
-	 * Init condition.
-	 */
-	void init();
+    Condition();
+    ~Condition();
+    
+    /**
+     * Init condition.
+     */
+    void init();
 
-	/**
-	 * Block the calling thread until condition is signalled.
-	 * @param mutex associated mutex
-	 * @note the associated mutex is used to control access to the condition 
-	 * variable. This method should be called while mutex is locked, 
-	 * and it will automatically release the mutex while it waits. 
-	 * After signal is received and thread is awakened, mutex will 
-	 * be automatically locked for use by the thread. The programmer is 
-	 * then responsible for unlocking mutex when the thread is finished 
-	 * with it. 
-	 */
-	void wait(Mutex& mutex);
-	
-	/**
-	 * Unblock one of the threads waiting on this condition variable.
-	 */
-	void wakeOne();
+    /**
+     * Block the calling thread until condition is signalled.
+     * @param mutex associated mutex
+     * @note the associated mutex is used to control access to the condition 
+     * variable. This method should be called while mutex is locked, 
+     * and it will automatically release the mutex while it waits. 
+     * After signal is received and thread is awakened, mutex will 
+     * be automatically locked for use by the thread. The programmer is 
+     * then responsible for unlocking mutex when the thread is finished 
+     * with it. 
+     */
+    void wait(Mutex& mutex);
+    
+    /**
+     * Unblock one of the threads waiting on this condition variable.
+     */
+    void wakeOne();
 
-	/**
-	 * Unblock all of the threads waiting on this condition variable.
-	 */
-	void wakeAll();
+    /**
+     * Unblock all of the threads waiting on this condition variable.
+     */
+    void wakeAll();
 
 #if defined(PLATFORM_WINDOWS)
-	CONDITION_VARIABLE* handle; //!< condition variable handle
+    CONDITION_VARIABLE* handle; //!< condition variable handle
 #else
-	pthreadcond_t* handle; //!< condition variable handle
+    pthreadcond_t* handle; //!< condition variable handle
 #endif
 };
 
@@ -193,89 +193,89 @@ template<typename T> class ALIGN_BEGIN(32) Atomic
 {
 public:
 
-	static_assert(sizeof(T) == 4, "T must be 32 bits");
-	
-	Atomic(const T& value = 0)
-	{
-		atomic = value;
-	}
+    static_assert(sizeof(T) == 4, "T must be 32 bits");
+    
+    Atomic(const T& value = 0)
+    {
+        atomic = value;
+    }
 
-	Atomic(const Atomic<T>& other)
-	{
-		atomic = other.read();
-	}
+    Atomic(const Atomic<T>& other)
+    {
+        atomic = other.read();
+    }
 
-	Atomic<T> operator=(const Atomic<T>& value)
-	{
-		atomic = value.read();
-		return *this;
-	}
+    Atomic<T> operator=(const Atomic<T>& value)
+    {
+        atomic = value.read();
+        return *this;
+    }
 
-	/**
-	 * Read the value of the atomic variable.
-	 */
-	T read() const
-	{
+    /**
+     * Read the value of the atomic variable.
+     */
+    T read() const
+    {
 #if defined(PLATFORM_WINDOWS)
-		return ::_InterlockedExchangeAdd((volatile long*)&atomic, 0);
+        return ::_InterlockedExchangeAdd((volatile long*)&atomic, 0);
 #else
-		return __sync_add_and_fetch(const_cast<T*>(&atomic), 0);
+        return __sync_add_and_fetch(const_cast<T*>(&atomic), 0);
 #endif
-	}
+    }
 
-	/**
-	 * Write a value to the atomic variable.
-	 * @param value value to write 
-	 */
-	T write(const T& value)
-	{
+    /**
+     * Write a value to the atomic variable.
+     * @param value value to write 
+     */
+    T write(const T& value)
+    {
 #if defined(PLATFORM_WINDOWS)
-		return ::_InterlockedExchange((volatile long*)&atomic, value);
+        return ::_InterlockedExchange((volatile long*)&atomic, value);
 #else
-		return __sync_lock_test_and_set(&atomic, value);
+        return __sync_lock_test_and_set(&atomic, value);
 #endif
-	}
+    }
 
-	/**
-	 * Add a value to the atomic variable.
-	 * @param value value to add 
-	 */
-	T add(const T& value)
-	{
+    /**
+     * Add a value to the atomic variable.
+     * @param value value to add 
+     */
+    T add(const T& value)
+    {
 #if defined(PLATFORM_WINDOWS)
-		return ::_InterlockedExchangeAdd((volatile long*)&atomic, value);
+        return ::_InterlockedExchangeAdd((volatile long*)&atomic, value);
 #else
-		return __sync_add_and_fetch(&atomic, value);
+        return __sync_add_and_fetch(&atomic, value);
 #endif
-	}
+    }
 
-	/**
-	 * Increment the atomic variable.
-	 */
-	T increment()
-	{
+    /**
+     * Increment the atomic variable.
+     */
+    T increment()
+    {
 #if defined(PLATFORM_WINDOWS)
-		return ::_InterlockedIncrement((volatile long*)&atomic);
+        return ::_InterlockedIncrement((volatile long*)&atomic);
 #else
-		return __sync_add_and_fetch(&atomic, 1);
+        return __sync_add_and_fetch(&atomic, 1);
 #endif
-	}
+    }
 
-	/**
-	 * Decrement the atomic variable.
-	 */
-	T decrement()
-	{
+    /**
+     * Decrement the atomic variable.
+     */
+    T decrement()
+    {
 #if defined(PLATFORM_WINDOWS)
-		return ::_InterlockedDecrement((volatile long*)&atomic);
+        return ::_InterlockedDecrement((volatile long*)&atomic);
 #else
-		return __sync_sub_and_fetch(&atomic, 1);
+        return __sync_sub_and_fetch(&atomic, 1);
 #endif
-	}
+    }
 
 private:
 
-	mutable T atomic; //!< atomic variable
+    mutable T atomic; //!< atomic variable
 } ALIGN_END(32);
 
 //-----------------------------------//
